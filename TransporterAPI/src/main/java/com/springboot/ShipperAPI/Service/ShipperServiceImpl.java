@@ -1,12 +1,12 @@
 package com.springboot.ShipperAPI.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.springboot.ShipperAPI.Dao.ShipperTransporterEmailDao;
+import com.springboot.ShipperAPI.Entity.ShipperTransporterEmail;
+import com.springboot.ShipperAPI.Response.ShipperGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +36,8 @@ public class ShipperServiceImpl implements ShipperService {
 	@Autowired
 	ShipperDao shipperdao;
 
+	@Autowired
+	ShipperTransporterEmailDao shipperTransporterEmailDao;
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public ShipperCreateResponse addShipper(PostShipper postshipper) {
@@ -118,6 +120,19 @@ public class ShipperServiceImpl implements ShipperService {
 		response.setAccountVerificationInProgress(false);
 
 		shipperdao.save(shipper);
+		if(postshipper.getTransporterList()!=null){
+			for(ArrayList<String> shipperTransporterEmail:postshipper.getTransporterList()){
+				ShipperTransporterEmail object=new ShipperTransporterEmail();
+				object.setShipper(shipper);
+				object.setEmail(shipperTransporterEmail.get(0));
+				object.setName(shipperTransporterEmail.get(1));
+				object.setPhoneNo(shipperTransporterEmail.get(2));
+				object.setTransporterId(shipperTransporterEmail.get(3));
+				shipperTransporterEmailDao.save(object);
+			}
+			response.setTransporterList(postshipper.getTransporterList());
+		}
+
 		log.info("shipper is saved to the database");
 
 		response.setStatus(CommonConstants.PENDING);
@@ -189,15 +204,28 @@ public class ShipperServiceImpl implements ShipperService {
 
 	@Transactional(readOnly = true, rollbackFor = Exception.class)
 	@Override
-	public Shipper getOneShipper(String shipperId) {
+	public ShipperGetResponse getOneShipper(String shipperId) {
 		log.info("getOneShipper service is started");
 		Optional<Shipper> S = shipperdao.findById(shipperId);
 		if(S.isEmpty()) {
-			throw new EntityNotFoundException(Shipper.class, "id",shipperId.toString());
+			throw new EntityNotFoundException(Shipper.class, "id", shipperId.toString());
 		}
+		ShipperGetResponse shipperGetResponse=new ShipperGetResponse();
+		shipperGetResponse.setShipper(S.get());
 
+		ArrayList<ShipperTransporterEmail> shipperTransporterEmailList=shipperTransporterEmailDao.findByShipperShipperId(S.get().getShipperId());
+		ArrayList<ArrayList<String>> emailList=new ArrayList<>();
+		for(ShipperTransporterEmail shipperTransporterEmail:shipperTransporterEmailList){
+			ArrayList<String> temp=new ArrayList<>();
+			temp.add(shipperTransporterEmail.getEmail());
+			temp.add(shipperTransporterEmail.getName());
+			temp.add(shipperTransporterEmail.getPhoneNo());
+			temp.add(shipperTransporterEmail.getTransporterId());
+			emailList.add(temp);
+		}
+		shipperGetResponse.setEmailList(emailList);
 		log.info("getOneShiper response is returned");
-		return S.get();
+		return shipperGetResponse;
 	}
 
 	@Transactional(rollbackFor = Exception.class)
@@ -261,6 +289,19 @@ public class ShipperServiceImpl implements ShipperService {
 		}
 
 		shipperdao.save(shipper);
+		if(updateShipper.getTransporterList()!=null){
+			shipperTransporterEmailDao.deleteAllByShipper(shipper);
+			for(ArrayList<String> shipperTransporterEmail:updateShipper.getTransporterList()){
+				ShipperTransporterEmail object=new ShipperTransporterEmail();
+				object.setShipper(shipper);
+				object.setEmail(shipperTransporterEmail.get(0));
+				object.setName(shipperTransporterEmail.get(1));
+				object.setPhoneNo(shipperTransporterEmail.get(2));
+				object.setTransporterId(shipperTransporterEmail.get(3));
+				shipperTransporterEmailDao.save(object);
+			}
+			updateResponse.setTransporterList(updateShipper.getTransporterList());
+		}
 		log.info("shipper is upadated and saved to the database");
 
 		updateResponse.setShipperId(shipper.getShipperId());

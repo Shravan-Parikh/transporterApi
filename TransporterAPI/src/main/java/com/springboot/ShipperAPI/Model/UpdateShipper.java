@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,4 +20,6 @@ public class UpdateShipper {
 	private String shipperLocation;
 	private Boolean companyApproved;
 	private Boolean accountVerificationInProgress;
+
+	private ArrayList<ArrayList<String>> transporterList;
 }

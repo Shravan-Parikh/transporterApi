@@ -7,6 +7,8 @@ import javax.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.ArrayList;
+
 @Data
 @AllArgsConstructor
 public class PostShipper {
@@ -23,4 +25,5 @@ public class PostShipper {
 	private String gst;
 	private String companyStatus;
 	private String kyc;
+	private ArrayList<ArrayList<String>> transporterList;
 }
