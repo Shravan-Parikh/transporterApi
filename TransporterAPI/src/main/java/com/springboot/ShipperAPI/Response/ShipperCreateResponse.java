@@ -1,6 +1,7 @@
 package com.springboot.ShipperAPI.Response;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -27,4 +28,6 @@ public class ShipperCreateResponse {
 	private boolean companyApproved;
 	private boolean accountVerificationInProgress;
 	public Timestamp timestamp;
+
+	private ArrayList<ArrayList<String>> transporterList;
 }
