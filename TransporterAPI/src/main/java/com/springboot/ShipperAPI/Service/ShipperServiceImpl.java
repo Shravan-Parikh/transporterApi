@@ -210,8 +210,20 @@ public class ShipperServiceImpl implements ShipperService {
 		if(S.isEmpty()) {
 			throw new EntityNotFoundException(Shipper.class, "id", shipperId.toString());
 		}
+		Shipper shipper=S.get();
 		ShipperGetResponse shipperGetResponse=new ShipperGetResponse();
-		shipperGetResponse.setShipper(S.get());
+
+		shipperGetResponse.setShipperId(shipper.getShipperId());
+		shipperGetResponse.setShipperName(shipper.getShipperName());
+		shipperGetResponse.setCompanyName(shipper.getCompanyName());
+		shipperGetResponse.setPhoneNo(shipper.getPhoneNo());
+		shipperGetResponse.setEmailId(shipper.getEmailId());
+		shipperGetResponse.setGst(shipper.getGst());
+		shipperGetResponse.setCompanyStatus(shipper.getCompanyStatus());
+		shipperGetResponse.setKyc(shipper.getKyc());
+		shipperGetResponse.setShipperLocation(shipper.getShipperLocation());
+		shipperGetResponse.setCompanyApproved(shipper.isCompanyApproved());
+		shipperGetResponse.setAccountVerificationInProgress(shipper.isAccountVerificationInProgress());
 
 		ArrayList<ShipperTransporterEmail> shipperTransporterEmailList=shipperTransporterEmailDao.findByShipperShipperId(S.get().getShipperId());
 		ArrayList<ArrayList<String>> emailList=new ArrayList<>();
@@ -223,7 +235,8 @@ public class ShipperServiceImpl implements ShipperService {
 			temp.add(shipperTransporterEmail.getTransporterId());
 			emailList.add(temp);
 		}
-		shipperGetResponse.setEmailList(emailList);
+		shipperGetResponse.setTransporterList(emailList);
+
 		log.info("getOneShiper response is returned");
 		return shipperGetResponse;
 	}
