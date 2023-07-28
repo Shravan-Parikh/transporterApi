@@ -1,8 +1,8 @@
 cloud:
   aws:
-   # credentials:
-     # access-key: ${access-key}    
-     # secret-key: ${secret-key}    
+    credentials:
+      access-key: ${access-key}    
+      secret-key: ${secret-key}    
             
     region:
       static: ap-south-1
