@@ -197,8 +197,6 @@ definitions:
         type: string
       kyc:
         type: string
-      emailId:
-        type: string
       phoneNo:
         type: integer
         format: int64
@@ -217,8 +215,6 @@ definitions:
       companyName:
         type: string
       kyc:
-        type: string
-      emailId:
         type: string
       phoneNo:
         type: integer
@@ -242,8 +238,6 @@ definitions:
       companyName:
         type: string
       kyc:
-        type: string
-      emailId:
         type: string
       message:
         type: string
@@ -280,8 +274,6 @@ definitions:
         type: string
       kyc:
         type: string
-      emailId:
-        type: string
       message:
         type: string
       phoneNo:
@@ -308,8 +300,6 @@ definitions:
       companyName:
         type: string
       kyc:
-        type: string
-      emailId:
         type: string
       phoneNo:
         type: integer
