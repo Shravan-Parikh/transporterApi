@@ -19,5 +19,6 @@ public class PostTransporter {
 	private String transporterName;
 	private String companyName;
 	private String kyc;
+	private String emailId;
 
 }

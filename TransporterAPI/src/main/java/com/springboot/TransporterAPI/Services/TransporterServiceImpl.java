@@ -54,6 +54,7 @@ public class TransporterServiceImpl implements TransporterService {
 			response.setTransporterLocation(t.get().getTransporterLocation());
 			response.setCompanyName(t.get().getCompanyName());
 			response.setKyc(t.get().getKyc());
+			response.setEmailId(t.get().getEmailId());
 			response.setTransporterApproved(t.get().isTransporterApproved());
 			response.setCompanyApproved(t.get().isCompanyApproved());
 			response.setAccountVerificationInProgress(t.get().isAccountVerificationInProgress());
@@ -92,6 +93,12 @@ public class TransporterServiceImpl implements TransporterService {
 		if(StringUtils.isNotBlank(temp)) {
 			transporter.setKyc(temp.trim());
 			response.setKyc(temp.trim());
+		}
+		
+		temp=postTransporter.getEmailId();
+		if(StringUtils.isNotBlank(temp)) {
+			transporter.setEmailId(temp.trim());
+			response.setEmailId(temp.trim());
 		}
 
 		transporter.setTransporterApproved(false);
@@ -215,6 +222,11 @@ public class TransporterServiceImpl implements TransporterService {
 		if (updateTransporter.getKyc() != null) {
 			transporter.setKyc(updateTransporter.getKyc());
 		}
+		
+		temp=updateTransporter.getEmailID();
+		if (StringUtils.isNotBlank(temp)) {
+			transporter.setEmailId(temp.trim());
+		}
 
 		if (updateTransporter.getTransporterApproved() != null) {
 			transporter.setTransporterApproved(updateTransporter.getTransporterApproved());
@@ -237,6 +249,7 @@ public class TransporterServiceImpl implements TransporterService {
 		updateResponse.setTransporterLocation(transporter.getTransporterLocation());
 		updateResponse.setCompanyName(transporter.getCompanyName());
 		updateResponse.setKyc(transporter.getKyc());
+		updateResponse.setEmailId(transporter.getEmailId());
 		updateResponse.setTransporterApproved(transporter.isTransporterApproved());
 		updateResponse.setCompanyApproved(transporter.isCompanyApproved());
 		updateResponse.setAccountVerificationInProgress(transporter.isAccountVerificationInProgress());
