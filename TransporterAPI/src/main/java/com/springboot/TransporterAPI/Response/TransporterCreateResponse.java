@@ -19,6 +19,7 @@ public class TransporterCreateResponse {
 	private String companyName;
 	private String transporterLocation;
 	private String kyc;
+	private String emailId;
 	private Boolean companyApproved;
 	private Boolean transporterApproved;
 	private Boolean accountVerificationInProgress;

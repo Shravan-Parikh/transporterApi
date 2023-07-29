@@ -33,6 +33,7 @@ public class Transporter {
 	private String companyName;
 	private String transporterLocation;
 	private String kyc;
+	private String emailId;
 	private boolean companyApproved;
 
 	@Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")

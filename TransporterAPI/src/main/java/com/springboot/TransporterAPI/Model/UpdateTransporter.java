@@ -13,6 +13,7 @@ public class UpdateTransporter {
 	private String transporterName;
 	private String companyName;
 	private String kyc;
+	private String emailID;
 	private Boolean companyApproved;
 	private Boolean transporterApproved;
 	private Boolean accountVerificationInProgress;
