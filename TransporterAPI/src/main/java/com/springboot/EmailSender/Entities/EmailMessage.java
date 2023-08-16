@@ -32,8 +32,8 @@ public class EmailMessage {
 	 @CreationTimestamp
 	    public Timestamp timestamp;
 	 
-	 public enum Status {
-			PENDING, ON_GOING, COMPLETED, EXPIRED
+	public enum emailSentStatus {
+			SENT, NOT_SENT
 		}
 
 	  
