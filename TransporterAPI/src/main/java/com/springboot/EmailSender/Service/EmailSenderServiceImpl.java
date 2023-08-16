@@ -24,19 +24,24 @@ public class EmailSenderServiceImpl implements EmailSenderService {
 
     @Transactional(rollbackFor = Exception.class)
 	@Override
-    public void sendEmail(String senderMailId, String receiverMailId, String senderName) {
+ public emailSentStatus sendEmail(String senderMailId, String receiverMailId, String senderName) {
+	    try {
+	    	 SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+	         simpleMailMessage.setFrom(senderMailId);
+	         simpleMailMessage.setTo(receiverMailId);
+	         String Subject = senderName + " has invited you to view file 'Liveasy'";
+	         simpleMailMessage.setSubject(Subject);
+	         String body = "Welcome to Liveasy, kindly login through the following url :- https://shipperwebapp.web.app/#/";
+	         simpleMailMessage.setText(body);
+	      
 
-        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-        simpleMailMessage.setFrom(senderMailId);
-        simpleMailMessage.setTo(receiverMailId);
-        String Subject = senderName + " has invited you to view file 'Liveasy'";
-        simpleMailMessage.setSubject(Subject);
-        String body = "Welcome to Liveasy, kindly login through the following url :- https://shipperwebapp.web.app/#/";
-        simpleMailMessage.setText(body);
-     
-
-        this.mailSender.send(simpleMailMessage);
-    }
+	         this.mailSender.send(simpleMailMessage);
+	        return emailSentStatus.SENT;
+	    } catch (Exception e) {
+	        // If sending the email failed
+	        return emailSentStatus.NOT_SENT;
+	    }
+	}
 
 	
 }
