@@ -1,5 +1,6 @@
 package com.springboot.TransporterAPI.Services;
 
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -57,9 +58,12 @@ public class TransporterServiceImpl implements TransporterService {
 			response.setEmailId(t.get().getEmailId());
 			response.setTransporterApproved(t.get().isTransporterApproved());
 			response.setCompanyApproved(t.get().isCompanyApproved());
+			response.setVendorCode(t.get().getVendorCode());
+			response.setPanNumber(t.get().getPanNumber());
+			response.setGstNumber(t.get().getGstNumber());
 			response.setAccountVerificationInProgress(t.get().isAccountVerificationInProgress());
-			response.setMessage(CommonConstants.accountExist);
 			response.setTimestamp(t.get().getTimestamp());
+			response.setMessage(CommonConstants.accountExist);
 			return response;
 		}
 
@@ -101,6 +105,24 @@ public class TransporterServiceImpl implements TransporterService {
 			response.setEmailId(temp.trim());
 		}
 
+		temp=postTransporter.getVendorCode();
+		if(StringUtils.isNotBlank(temp)) {
+			transporter.setVendorCode(temp.trim());
+			response.setVendorCode(temp.trim());
+		}
+
+		temp=postTransporter.getPanNumber();
+		if(StringUtils.isNotBlank(temp)) {
+			transporter.setPanNumber(temp.trim());
+			response.setPanNumber(temp.trim());
+		}
+
+		temp=postTransporter.getGstNumber();
+		if(StringUtils.isNotBlank(temp)) {
+			transporter.setGstNumber(temp.trim());
+			response.setGstNumber(temp.trim());
+		}
+
 		transporter.setTransporterApproved(false);
 		response.setTransporterApproved(false);
 
@@ -117,7 +139,7 @@ public class TransporterServiceImpl implements TransporterService {
 		response.setMessage(CommonConstants.approveRequest);
 
 		log.info("addTransporter response is returned");
-		response.setTimestamp(transporter.getTimestamp());
+		response.setTimestamp(transporter.getTimestamp()/*transporterdao.findByPhoneNo(postTransporter.getPhoneNo()).get().getTimestamp()*/);
 		return response;
 	}
 
@@ -227,6 +249,20 @@ public class TransporterServiceImpl implements TransporterService {
 		if (StringUtils.isNotBlank(temp)) {
 			transporter.setEmailId(temp.trim());
 		}
+		temp=updateTransporter.getVendorCode();
+		if(StringUtils.isNotBlank(temp)){
+			transporter.setVendorCode(temp.trim());
+		}
+
+		temp=updateTransporter.getPanNumber();
+		if(StringUtils.isNotBlank(temp)){
+			transporter.setPanNumber(temp.trim());
+		}
+
+		temp=updateTransporter.getGstNumber();
+		if(StringUtils.isNotBlank(temp)){
+			transporter.setPanNumber(temp.trim());
+		}
 
 		if (updateTransporter.getTransporterApproved() != null) {
 			transporter.setTransporterApproved(updateTransporter.getTransporterApproved());
@@ -252,6 +288,9 @@ public class TransporterServiceImpl implements TransporterService {
 		updateResponse.setEmailId(transporter.getEmailId());
 		updateResponse.setTransporterApproved(transporter.isTransporterApproved());
 		updateResponse.setCompanyApproved(transporter.isCompanyApproved());
+		updateResponse.setVendorCode(transporter.getVendorCode());
+		updateResponse.setPanNumber(transporter.getPanNumber());
+		updateResponse.setGstNumber(transporter.getGstNumber());
 		updateResponse.setAccountVerificationInProgress(transporter.isAccountVerificationInProgress());
 		updateResponse.setStatus(CommonConstants.success);
 		updateResponse.setMessage(CommonConstants.updateSuccess);

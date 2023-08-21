@@ -21,6 +21,9 @@ public class TransporterCreateResponse {
 	private String kyc;
 	private String emailId;
 	private Boolean companyApproved;
+	private String vendorCode;
+	private String panNumber;
+	private String gstNumber;
 	private Boolean transporterApproved;
 	private Boolean accountVerificationInProgress;
 	public Timestamp timestamp;
