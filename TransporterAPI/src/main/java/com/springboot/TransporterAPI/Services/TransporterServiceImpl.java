@@ -139,7 +139,7 @@ public class TransporterServiceImpl implements TransporterService {
 		response.setMessage(CommonConstants.approveRequest);
 
 		log.info("addTransporter response is returned");
-		response.setTimestamp(transporter.getTimestamp()/*transporterdao.findByPhoneNo(postTransporter.getPhoneNo()).get().getTimestamp()*/);
+		response.setTimestamp(transporter.getTimestamp());
 		return response;
 	}
 
@@ -261,7 +261,7 @@ public class TransporterServiceImpl implements TransporterService {
 
 		temp=updateTransporter.getGstNumber();
 		if(StringUtils.isNotBlank(temp)){
-			transporter.setPanNumber(temp.trim());
+			transporter.setGstNumber(temp.trim());
 		}
 
 		if (updateTransporter.getTransporterApproved() != null) {
