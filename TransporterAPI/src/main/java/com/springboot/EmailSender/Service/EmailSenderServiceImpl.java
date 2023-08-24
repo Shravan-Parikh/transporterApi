@@ -18,16 +18,19 @@ public class EmailSenderServiceImpl implements EmailSenderService {
 
     private final JavaMailSender mailSender;
 
+	@Value("${email_name}")
+	 private String senderEmail;
+
     public EmailSenderServiceImpl(JavaMailSender mailSender) {
         this.mailSender = mailSender;
     }
 
     @Transactional(rollbackFor = Exception.class)
 	@Override
- public emailSentStatus sendEmail(String senderMailId, String receiverMailId, String senderName) {
+ public emailSentStatus sendEmail(String receiverMailId, String senderName) {
 	    try {
 	    	 SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-	         simpleMailMessage.setFrom(senderMailId);
+	         simpleMailMessage.setFrom(senderMail);
 	         simpleMailMessage.setTo(receiverMailId);
 	         String Subject = senderName + " has invited you to view file 'Liveasy'";
 	         simpleMailMessage.setSubject(Subject);
