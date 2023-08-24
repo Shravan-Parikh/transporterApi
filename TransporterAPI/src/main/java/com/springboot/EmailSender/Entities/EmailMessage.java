@@ -22,8 +22,7 @@ public class EmailMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-	 @NotBlank(message = "Email Cannot Be Empty")
-	    private String senderMailId;
+	 
 	 @NotBlank(message = "Email Cannot Be Empty")
 	    private String receiverMailId;
 	 @NotBlank(message = "Sender Name Cannot Be Empty")
