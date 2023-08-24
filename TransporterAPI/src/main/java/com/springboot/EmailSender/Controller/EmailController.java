@@ -25,7 +25,7 @@ public class EmailController {
     
     @PostMapping("/sendEmail")
     public ResponseEntity<String> sendEmail(@RequestBody EmailMessage emailMessage) {
-        this.emailSenderService.sendEmail(emailMessage.getSenderMailId(), emailMessage.getReceiverMailId(), emailMessage.getSenderName());
+        this.emailSenderService.sendEmail(emailMessage.getReceiverMailId(), emailMessage.getSenderName());
         return ResponseEntity.ok("Success");
     }
 } 
