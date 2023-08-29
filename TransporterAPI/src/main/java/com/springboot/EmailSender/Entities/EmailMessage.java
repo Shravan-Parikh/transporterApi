@@ -1,5 +1,6 @@
 package com.springboot.EmailSender.Entities;
 
+import java.sql.Timestamp;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -9,7 +10,6 @@ import javax.validation.constraints.NotBlank;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import com.google.cloud.Timestamp;
 
 import lombok.Data;
 
