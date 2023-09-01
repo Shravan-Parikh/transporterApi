@@ -2,6 +2,7 @@ package com.springboot.ShipperAPI.Service;
 
 import java.util.List;
 
+import com.springboot.ShipperAPI.Response.ShipperGetResponse;
 import org.springframework.stereotype.Service;
 
 import com.springboot.ShipperAPI.Entity.Shipper;
@@ -16,7 +17,7 @@ public interface ShipperService {
 
 	public List<Shipper> getShippers(Boolean companyApproved, String phoneNo, String emailId, Integer pageNo);
 
-	public Shipper getOneShipper(String shipperId);
+	public ShipperGetResponse getOneShipper(String shipperId);
 
 	public ShipperUpdateResponse updateShipper(String shipperId, UpdateShipper shipper);
 
