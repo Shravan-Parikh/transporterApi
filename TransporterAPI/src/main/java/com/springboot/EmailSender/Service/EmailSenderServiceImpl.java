@@ -34,7 +34,7 @@ public class EmailSenderServiceImpl implements EmailSenderService {
 	    	 SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
 	         simpleMailMessage.setFrom(senderEmail);
 	         simpleMailMessage.setTo(receiverMailId); // requested from the user
-	         String Subject = senderName + " has invited you to view file 'Liveasy'";
+	         String Subject = senderName + " has invited you to log in to 'Liveasy'";
 	         simpleMailMessage.setSubject(Subject);
 	         String body = "Welcome to Liveasy, kindly login through the following url :- https://shipperwebapp.web.app/#/";
 	         simpleMailMessage.setText(body);
