@@ -13,7 +13,12 @@ public class UpdateTransporter {
 	private String transporterName;
 	private String companyName;
 	private String kyc;
+	private String emailID;
 	private Boolean companyApproved;
+	private String vendorCode;
+	private String panNumber;
+	private String gstNumber;
 	private Boolean transporterApproved;
 	private Boolean accountVerificationInProgress;
+
 }
