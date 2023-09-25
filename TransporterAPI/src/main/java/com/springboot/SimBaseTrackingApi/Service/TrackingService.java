@@ -8,22 +8,22 @@ import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPatch;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import com.springboot.SimBaseTrackingApi.AirtelStartTrackingData;
 import com.springboot.SimBaseTrackingApi.LocationResponse;
 import com.springboot.SimBaseTrackingApi.Authentication.AirtelAuthentication;
 import com.springboot.SimBaseTrackingApi.Authentication.JioAuthentication;
 import com.springboot.SimBaseTrackingApi.Authentication.VodafoneAuthentication;
 import com.springboot.SimBaseTrackingApi.Entity.Entity;
 import com.springboot.SimBaseTrackingApi.Status.ConsentStatus;
+
+import reactor.core.publisher.Mono;
 
 
 @Service
@@ -164,7 +164,7 @@ public class TrackingService {
                     status=response.toString(4);
                 }
             }
-        }catch( Exception e){
+        }catch(Exception e){
             status="Internal Server Error";
         }
         return status;         
@@ -203,22 +203,29 @@ public class TrackingService {
                 }     
             }  
             else if(operatorName.equals("Bharti Airtel Ltd")){
+  
+                AirtelStartTrackingData data=new AirtelStartTrackingData();
+                data.setIsTrackingEnabled("true");
+                WebClient client=WebClient.create(airtelLocationUrl+"91"+mobileNumber);
 
-                jsonData.put("isTrackingEnabled", true);
-                try(CloseableHttpClient httpClient = HttpClients.createDefault()){
-                    jsonData.put("isTrackingEnabled", "true");
-                    HttpPatch httpPatch = new HttpPatch(airtelConsentUrl+"91"+mobileNumber);
-                    httpPatch.addHeader("accept", "application/json");
-                    httpPatch.addHeader("access_token", airtel.getResourceToken());
+                Mono<Object> resp=client.patch()
+                                        .header("access_token", airtel.getResourceToken())
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .body(Mono.just(data), AirtelStartTrackingData.class)
+                                        .exchangeToMono(response -> {
+                                            if (response.statusCode().is4xxClientError()) {
+                                                return response.bodyToMono(String.class);
+                                            }
+                                            else{
+                                                return response.bodyToMono(Void.class);
+                                            }
+                                        });
 
-                    StringEntity entity=new StringEntity(jsonData.toString());
-                    entity.setContentType("application/json");
-                    httpPatch.setEntity(entity);
-                    
-                    CloseableHttpResponse response= httpClient.execute(httpPatch);
-                    System.out.println(response);
-                    System.out.println("Response status: " + response.getStatusLine().getStatusCode());
-                    status=response.getStatusLine().toString();
+                if(resp.hasElement().block().booleanValue()){
+                     status=resp.block().toString();
+                }
+                else{
+                    status="Tracking Activated";
                 }
             } 
         }catch(Exception e){
