@@ -8,7 +8,6 @@ import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -121,7 +120,7 @@ public class StatusGenerator {
                 }  
             }
 
-            if(pseudoStatus.equals("ACTIVE")){
+            if(pseudoStatus.equals("ACTIVE") && !data.getStatus().equals("APPROVED")){
                 data.setStatus("APPROVED");
             }
             else if(pseudoStatus.equals("CONSENT_APPROVED") || pseudoStatus.equals("ALLOWED")){
@@ -130,7 +129,9 @@ public class StatusGenerator {
                     data.setStatus("APPROVED");
                 }
             }
-            else if(pseudoStatus.equals("REJECTED")){
+            else if(pseudoStatus.equals("REJECTED")
+            || pseudoStatus.equals("REVOKED") ||pseudoStatus.equals("EXPIRED")
+            || pseudoStatus.equals("DEREGISTERED")){
                 data.setStatus("REJECTED");
             }
             trackingDao.save(data);

@@ -2,6 +2,7 @@ package com.springboot.SimBaseTrackingApi.Status;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +32,12 @@ public class StatusScheduledTask {
 
             tokenValidator.validator();
 
-            List<TrackingData> listData = trackingDao.findByStatus("PENDING");
-
+            List<TrackingData> listDataPending = trackingDao.findByStatus("PENDING");
+            List<TrackingData> listDataApproved = trackingDao.findByStatus("APPROVED");
+            List<TrackingData> listData=new ArrayList<TrackingData>();
+            listData.addAll(listDataPending);
+            listData.addAll(listDataApproved);
+            
             for(TrackingData data:listData){
                 statusGenerator.ConsentStatus(data);
             }

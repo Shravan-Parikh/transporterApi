@@ -153,7 +153,7 @@ public class TrackingService {
                         byte[] reqBody = jsonData.toString().getBytes(StandardCharsets.UTF_8);
                         outStream.write(reqBody, 0, reqBody.length);
                     } 
-                    webConnection.connect();
+                    webConnection.getResponseCode();
                     data.setMobileNumber(mobileNumber);
                     data.setDriverName(driverName);
                     data.setOperatorName(operatorName);
