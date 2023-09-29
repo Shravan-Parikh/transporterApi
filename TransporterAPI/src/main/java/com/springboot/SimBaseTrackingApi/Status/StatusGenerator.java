@@ -157,7 +157,8 @@ public class StatusGenerator {
                 try(OutputStream outStream = webConnection.getOutputStream()){
                     byte[] reqBody = jsonData.toString().getBytes(StandardCharsets.UTF_8);
                     outStream.write(reqBody, 0, reqBody.length);
-                }    
+                }   
+                webConnection.getResponseCode(); 
             }  
             else if(operatorName.equals("Bharti Airtel Ltd")){
 
