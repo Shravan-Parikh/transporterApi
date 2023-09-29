@@ -9,8 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RestController;
-import com.springboot.SimBaseTrackingApi.LocationResponse;
-import com.springboot.SimBaseTrackingApi.Entity.Entity;
+import com.springboot.SimBaseTrackingApi.Entity.TrackingEntity;
 import com.springboot.SimBaseTrackingApi.Service.TrackingService;
 import com.springboot.SimBaseTrackingApi.Status.ConsentStatus;
 
@@ -21,15 +20,9 @@ public class TrackingController {
     public TrackingService service;
 
     @PostMapping("/consent")
-    public ResponseEntity<Object> ConsentResponse(@Valid @RequestBody Entity entity) 
-    throws IOException{
-        return new ResponseEntity<>(service.getConsentResponse(entity), HttpStatus.OK);
-    }
-
-    @GetMapping("/activateTracking/{mobileNumber}")
-    public ResponseEntity<String> startTrackingResponse(@PathVariable String mobileNumber) 
+    public ResponseEntity<ConsentStatus> ConsentResponse(@Valid @RequestBody TrackingEntity entity) 
     throws IOException, URISyntaxException{
-        return new ResponseEntity<>(service.getStartTrackingResponse(mobileNumber), HttpStatus.OK);
+        return new ResponseEntity<>(service.getConsentResponse(entity), HttpStatus.OK);
     }
 
     @GetMapping("/consentStatus/{mobileNumber}")
@@ -38,9 +31,4 @@ public class TrackingController {
         return new ResponseEntity<>(service.getConsentStatus(mobileNumber), HttpStatus.OK);
     }
 
-    @GetMapping("/location/{mobileNumber}")
-    public ResponseEntity<LocationResponse> TrackingResponse(@PathVariable String mobileNumber) 
-    throws IOException, InterruptedException{
-        return new ResponseEntity<>(service.getTrackingResponse(mobileNumber), HttpStatus.OK);
-    }
 }
