@@ -124,9 +124,6 @@ public class LocationGenerator {
             serverTime=locationResponse.getString("retrievedAt");
             }  
         }
-        System.out.println("lat:"+latitude);
-        System.out.println(mobileNumber);
-        System.out.println(Thread.currentThread().getName());
         if(latitude!=null && longitude!=null && serverTime!=null){
             String date=serverTime.substring(0, 10);
             String time=serverTime.substring(11, 19);
@@ -141,7 +138,7 @@ public class LocationGenerator {
             HttpURLConnection traccarConnection = (HttpURLConnection) weburl.openConnection();
             traccarConnection.setRequestMethod("GET");
             traccarConnection.setDoOutput(true);
-            traccarConnection.connect();
+            traccarConnection.getResponseCode();
         }
     }
 }
