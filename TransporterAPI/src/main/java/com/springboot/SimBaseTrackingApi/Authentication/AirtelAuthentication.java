@@ -34,12 +34,12 @@ public class AirtelAuthentication {
     @Value ("${AirtelAuthenticationUrl}") 
     String airtelUrl;
 
-    @Value ("${AirtelLocationUrl}")
-    String airtelLocationUrl;
+    @Value ("${AirtelGetAllDeviceUrl}")
+    String airtelGetAllDeviceUrl;
 
     @Bean
     public WebClient webClient() {
-        return WebClient.builder().baseUrl(airtelLocationUrl).build();
+        return WebClient.builder().baseUrl(airtelGetAllDeviceUrl).build();
     }
     // 23 Hour
     @Scheduled(fixedRate = 82800000)

@@ -47,12 +47,13 @@ public class StatusGenerator {
     @Value("${VodafoneConsentStatusUrl}")
     String vodafoneConsentStatusUrl;
 
-    @Value ("${AirtelLocationUrl}")
-    String airtelLocationUrl;
+    @Value ("${AirtelGetAllDeviceUrl}")
+    String airtelGetAllDeviceUrl;
 
     public void ConsentStatus(TrackingData data) throws IOException, URISyntaxException{
 
             String pseudoStatus="";
+            boolean tracking=false;
 
             String operatorName=data.getOperatorName();
             String mobileNumber=data.getMobileNumber();
@@ -101,7 +102,7 @@ public class StatusGenerator {
             }
             else if(operatorName.equals("Bharti Airtel Ltd")){
 
-                URL weburl=new URL(airtelLocationUrl+"91"+mobileNumber+"/consent");
+                URL weburl=new URL(airtelGetAllDeviceUrl+"91"+mobileNumber);
                 HttpURLConnection webConnection = (HttpURLConnection) weburl.openConnection();
                 webConnection.setRequestMethod("GET");
                 webConnection.setRequestProperty("Accept", "application/json");
@@ -117,15 +118,25 @@ public class StatusGenerator {
                         resp.append(respLine.trim());
                     }            
                 pseudoStatus=new JSONObject(resp.toString()).getString("consent").toUpperCase();
+                tracking=new JSONObject(resp.toString()).getBoolean("tracking");
                 }  
             }
 
-            if(pseudoStatus.equals("ACTIVE") && !data.getStatus().equals("APPROVED")){
+            if(pseudoStatus.equals("ACTIVE") && data.getStatus().equals("PENDING")){
                 data.setStatus("APPROVED");
             }
-            else if(pseudoStatus.equals("CONSENT_APPROVED") || pseudoStatus.equals("ALLOWED")){
-                String s= StartTracking(mobileNumber,operatorName);
-                if(s.equals("APPROVED")){
+            else if(pseudoStatus.equals("CONSENT_APPROVED")){
+                StartTracking(mobileNumber,operatorName);
+                data.setStatus("APPROVED");
+            }
+            else if(pseudoStatus.equals("ALLOWED") && data.getStatus().equals("PENDING")){
+                if(tracking==false){
+                    String s= StartTracking(mobileNumber,operatorName);
+                    if(s.equals("APPROVED")){
+                        data.setStatus("APPROVED");
+                    }
+                }
+                else{
                     data.setStatus("APPROVED");
                 }
             }
@@ -164,16 +175,27 @@ public class StatusGenerator {
 
                 AirtelStartTrackingData data=new AirtelStartTrackingData();
                 data.setIsTrackingEnabled("true");
-                WebClient client=WebClient.create(airtelLocationUrl+"91"+mobileNumber);
-
-                client.patch()
+                WebClient client=WebClient.create(airtelGetAllDeviceUrl+"91"+mobileNumber);
+                
+               Mono<Object> resp=client.patch()
                         .header("access_token", airtel.getResourceToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(Mono.just(data), AirtelStartTrackingData.class)
-                        .retrieve();
+                        .exchangeToMono(response -> {
+                            if (response.statusCode().is4xxClientError()) {
+                                return response.bodyToMono(String.class);
+                            }
+                            else {
+                                return response.bodyToMono(Void.class);
+                            }
+                            }
+                        );
+                    if(resp.hasElement().block().booleanValue()==true){
+                        status="EXCEPTION";
+                    }                       
             } 
         }catch(Exception e){
-            status="Exception";
+            status="EXCEPTION";
         }
         return status;
     }

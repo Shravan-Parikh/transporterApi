@@ -25,8 +25,8 @@ public class LocationScheduledTask {
     @Autowired
     private TokenValidator tokenValidator;
     
-    // 15 min with initial delay 2 min
-    @Scheduled(fixedRate = 900000, initialDelay = 120000)
+    // 15 min 15 sec with initial delay 2 min
+    @Scheduled(fixedRate = 915000, initialDelay = 120000)
     public void getList() throws IOException, InterruptedException, URISyntaxException{
 
         tokenValidator.validator();
