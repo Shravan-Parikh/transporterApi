@@ -75,7 +75,7 @@ public class TokenValidator {
         int statusCode=0;
         webConnection = (HttpURLConnection) airtelLocationUrl.openConnection();
         webConnection.setRequestMethod("GET");
-        webConnection.setRequestProperty("access_token", "test");
+        webConnection.setRequestProperty("access_token", airtel.getLocationToken());
         statusCode=webConnection.getResponseCode();
         if(statusCode==401){
             try{
