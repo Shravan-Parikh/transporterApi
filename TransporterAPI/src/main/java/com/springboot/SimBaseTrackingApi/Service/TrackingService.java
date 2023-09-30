@@ -45,7 +45,7 @@ public class TrackingService {
         @Value ("${JioConsentUrl}") 
         String jioConsentUrl;
 
-        @Value("${JioValidateTokenUrl}")
+        @Value("${JioGetAllDeviceUrl}")
         String validateJioTokenUrl;
 
         @Value("${VodafoneConsentStatusUrl}")
@@ -57,7 +57,7 @@ public class TrackingService {
         @Value ("${AirtelConsentUrl}") 
         String airtelConsentUrl;
 
-        @Value("${AirtelValidateTokenUrl}")
+        @Value("${AirtelGetAllDeviceUrl}")
         String validateAirtelTokenUrl;
 
         @Value ("${OperatorUrl}")
@@ -153,13 +153,18 @@ public class TrackingService {
                         byte[] reqBody = jsonData.toString().getBytes(StandardCharsets.UTF_8);
                         outStream.write(reqBody, 0, reqBody.length);
                     } 
-                    webConnection.getResponseCode();
-                    data.setMobileNumber(mobileNumber);
-                    data.setDriverName(driverName);
-                    data.setOperatorName(operatorName);
-                    data.setStatus("PENDING");
-                    trackingDao.save(data);
-                    status.setStatus("Consent Send to driver");
+                    int statusCode=webConnection.getResponseCode();
+                    if(statusCode==200){
+                        data.setMobileNumber(mobileNumber);
+                        data.setDriverName(driverName);
+                        data.setOperatorName(operatorName);
+                        data.setStatus("PENDING");
+                        trackingDao.save(data);
+                        status.setStatus("Consent Send to driver");
+                    }
+                    else{
+                        status.setError("Internal Server error");
+                    }
                 }
                 else{
                     status.setError("Device already registered");

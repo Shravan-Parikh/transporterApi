@@ -22,84 +22,80 @@ public class TokenValidator {
     @Autowired
     public  AirtelAuthentication airtel;
 
-    @Value("${JioValidateTokenUrl}")
+    @Value("${JioGetAllDeviceUrl}")
     String validateJioTokenUrl;
 
     @Value("${VodafoneConsentStatusUrl}")
     String validateVodaTokenUrl;
 
-    @Value("${AirtelValidateTokenUrl}")
+    @Value("${AirtelGetAllDeviceUrl}")
     String validateAirtelTokenUrl;
     
     public void validator() throws URISyntaxException, IOException{
         URL jioUrl = new URL(validateJioTokenUrl);
         URL vodaUrl = new URL(validateVodaTokenUrl);
-        URL airtelUrl = new URL(validateAirtelTokenUrl);
+        URL airtelLocationUrl = new URL(validateAirtelTokenUrl+123+"/location");
+        URL airtelResourceUrl = new URL(validateAirtelTokenUrl);
         validateJioToken(jioUrl);
         validateVodafoneToken(vodaUrl);
-        validateAirtelResourceToken(airtelUrl);
-        validateAirtelLocationToken(airtelUrl);
+        validateAirtelLocationToken(airtelLocationUrl);
+        validateAirtelResourceToken(airtelResourceUrl);
     }
     public void validateJioToken(URL jioUrl) throws URISyntaxException, IOException{
         HttpURLConnection webConnection=null;
         int statusCode=0;
-        try{
-            webConnection = (HttpURLConnection) jioUrl.openConnection();
-            webConnection.setRequestMethod("GET");
-            webConnection.setRequestProperty("x-access-token", jio.getToken());
-            statusCode=webConnection.getResponseCode();
-        }catch(Exception e){
-            if(statusCode==401){
+        webConnection = (HttpURLConnection) jioUrl.openConnection();
+        webConnection.setRequestMethod("GET");
+        webConnection.setRequestProperty("x-access-token", jio.getToken());
+        statusCode=webConnection.getResponseCode();
+        if(statusCode==401){
+            try{
                 jio.generateToken();
-            }
+            }catch(Exception e){}
         }
     }
     public void validateVodafoneToken(URL vodaUrl) throws URISyntaxException, IOException{
 
         HttpURLConnection webConnection=null;
         int statusCode=0;
-        try{
-            webConnection = (HttpURLConnection) vodaUrl.openConnection();
-            webConnection.setRequestMethod("GET");
-            webConnection.setRequestProperty("token", voda.getToken());
-            statusCode=webConnection.getResponseCode();
-        }catch(Exception e){
-            if(statusCode==401){
+        webConnection = (HttpURLConnection) vodaUrl.openConnection();
+        webConnection.setRequestMethod("GET");
+        webConnection.setRequestProperty("token", voda.getToken());
+        statusCode=webConnection.getResponseCode();
+        if(statusCode==500){
+            try{
                 voda.generateToken();
-            }
+            }catch(Exception e){}
         }
     }
 
-
-    public void validateAirtelLocationToken(URL airtelUrl) throws URISyntaxException, IOException{
+    public void validateAirtelLocationToken(URL airtelLocationUrl) throws URISyntaxException, IOException{
 
         HttpURLConnection webConnection=null;
         int statusCode=0;
-        try{
-            webConnection = (HttpURLConnection) airtelUrl.openConnection();
-            webConnection.setRequestMethod("GET");
-            webConnection.setRequestProperty("access_token", airtel.getLocationToken());
-            statusCode=webConnection.getResponseCode();
-        }catch(Exception e){
-            if(statusCode==401){
+        webConnection = (HttpURLConnection) airtelLocationUrl.openConnection();
+        webConnection.setRequestMethod("GET");
+        webConnection.setRequestProperty("access_token", "test");
+        statusCode=webConnection.getResponseCode();
+        if(statusCode==401){
+            try{
                 airtel.generateLocationToken();
-            }
+            }catch(Exception e){}
         }
     }
 
-    public void validateAirtelResourceToken(URL airtelUrl) throws URISyntaxException, IOException{
+    public void validateAirtelResourceToken(URL airtelResourceUrl) throws URISyntaxException, IOException{
 
         HttpURLConnection webConnection=null;
         int statusCode=0;
-        try{
-            webConnection = (HttpURLConnection) airtelUrl.openConnection();
-            webConnection.setRequestMethod("GET");
-            webConnection.setRequestProperty("access_token", airtel.getResourceToken());
-            statusCode=webConnection.getResponseCode();
-        }catch(Exception e){
-            if(statusCode==401){
+        webConnection = (HttpURLConnection) airtelResourceUrl.openConnection();
+        webConnection.setRequestMethod("GET");
+        webConnection.setRequestProperty("access_token", airtel.getResourceToken());
+        statusCode=webConnection.getResponseCode();
+        if(statusCode==401){
+            try{
                 airtel.generateResourceToken();
-            }
+            }catch(Exception e){}
         }
     }
 }

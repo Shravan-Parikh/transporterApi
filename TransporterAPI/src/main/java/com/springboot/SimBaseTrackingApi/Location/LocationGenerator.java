@@ -37,8 +37,8 @@ public class LocationGenerator {
     @Value ("${VodafoneLocationUrl}")
     String vodaLocationUrl;
 
-    @Value ("${AirtelLocationUrl}")
-    String airtelLocationUrl;
+    @Value ("${AirtelGetAllDeviceUrl}")
+    String airtelGetAllDeviceUrl;
 
     @Value("${TraccarUrl}")
     String traccarUrl;
@@ -103,7 +103,7 @@ public class LocationGenerator {
         }                    
         else if(operatorName.equals("Bharti Airtel Ltd")){
             
-            URL weburl=new URL(airtelLocationUrl+"91"+mobileNumber+"/location");
+            URL weburl=new URL(airtelGetAllDeviceUrl+"91"+mobileNumber+"/location");
             webConnection = (HttpURLConnection) weburl.openConnection();
             webConnection.setRequestMethod("GET");
             webConnection.setRequestProperty("Accept", "application/json");
@@ -127,7 +127,7 @@ public class LocationGenerator {
         if(latitude!=null && longitude!=null && serverTime!=null){
             String date=serverTime.substring(0, 10);
             String time=serverTime.substring(11, 19);
-            URL weburl=new URL(this.traccarUrl
+            URL weburl=new URL(traccarUrl
                                         +"?id="+mobileNumber
                                         +"&lat="+latitude
                                         +"&lon="+longitude
