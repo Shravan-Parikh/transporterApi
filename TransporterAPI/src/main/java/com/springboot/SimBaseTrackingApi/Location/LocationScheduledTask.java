@@ -29,7 +29,7 @@ public class LocationScheduledTask {
     @Scheduled(fixedRate = 915000, initialDelay = 120000)
     public void getList() throws IOException, InterruptedException, URISyntaxException{
 
-        tokenValidator.validator();
+        tokenValidator.validator("validateLocation");
 
         List<TrackingData> listData = trackingDao.findByStatus("APPROVED");
 
