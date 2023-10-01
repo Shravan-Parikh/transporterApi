@@ -144,9 +144,11 @@ public class TrackingService {
                 ConsentStatus consentStatus=getConsentStatus(mobileNumber);
                 TrackingData data=new TrackingData();
                 if(consentStatus.getStatus().equals("REJECTED") 
-                ||consentStatus.getError().equals("Device not found")){
+                ||consentStatus.getError().equals("Device not found")
+                || consentStatus.getStatus().equals("PENDING")){
 
-                    if(consentStatus.getStatus().equals("REJECTED")){
+                    if(consentStatus.getStatus().equals("REJECTED")
+                    || consentStatus.getStatus().equals("PENDING")){
                         data.setTrackingId(trackingDao.findByMobileNumber(mobileNumber).get(0).getTrackingId());
                     } 
                     try (OutputStream outStream = webConnection.getOutputStream()){
@@ -161,6 +163,9 @@ public class TrackingService {
                         data.setStatus("PENDING");
                         trackingDao.save(data);
                         status.setStatus("Consent Send to driver");
+                    }
+                    else if(statusCode==400){
+                        status.setStatus("Sending Consent disallowed by Operator");
                     }
                     else{
                         status.setError("Internal Server error");

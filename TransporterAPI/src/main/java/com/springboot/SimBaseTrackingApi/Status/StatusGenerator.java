@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import com.springboot.SimBaseTrackingApi.AirtelStartTrackingData;
@@ -50,6 +51,7 @@ public class StatusGenerator {
     @Value ("${AirtelGetAllDeviceUrl}")
     String airtelGetAllDeviceUrl;
 
+    @Async
     public void ConsentStatus(TrackingData data) throws IOException, URISyntaxException{
 
             String pseudoStatus="";
@@ -126,8 +128,11 @@ public class StatusGenerator {
                 data.setStatus("APPROVED");
             }
             else if(pseudoStatus.equals("CONSENT_APPROVED")){
-                StartTracking(mobileNumber,operatorName);
-                data.setStatus("APPROVED");
+
+                String s = StartTracking(mobileNumber,operatorName);
+                if(s.equals("APPROVED")){
+                    data.setStatus("APPROVED");
+                }
             }
             else if(pseudoStatus.equals("ALLOWED") && data.getStatus().equals("PENDING")){
                 if(tracking==false){
