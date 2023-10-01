@@ -172,11 +172,11 @@ public class TrackingService {
                     }
                 }
                 else{
-                    status.setError("Device already registered");
+                    status.setStatus("Device already registered");
                 }
             }
             else{
-                status.setStatus("Invalid Number");
+                status.setStatus("Invalid/Insufficient Information");
             }
         }catch(Exception e){
             status.setError("Internal Server error");

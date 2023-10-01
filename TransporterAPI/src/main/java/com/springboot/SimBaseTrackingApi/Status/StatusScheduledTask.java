@@ -30,7 +30,7 @@ public class StatusScheduledTask {
     @Scheduled(fixedRate = 300000, initialDelay = 60000)
     public void ConsentStatus() throws IOException, URISyntaxException{
 
-            tokenValidator.validator();
+            tokenValidator.validator("validateResource");
 
             List<TrackingData> listDataPending = trackingDao.findByStatus("PENDING");
             List<TrackingData> listDataApproved = trackingDao.findByStatus("APPROVED");
