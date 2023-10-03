@@ -156,7 +156,7 @@ public class TrackingService {
                         outStream.write(reqBody, 0, reqBody.length);
                     } 
                     int statusCode=webConnection.getResponseCode();
-                    if(statusCode==200){
+                    if(statusCode==200 || statusCode==202){
                         data.setMobileNumber(mobileNumber);
                         data.setDriverName(driverName);
                         data.setOperatorName(operatorName);
