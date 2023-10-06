@@ -71,7 +71,7 @@ public class TokenValidator {
             webConnection.setRequestMethod("GET");
             webConnection.setRequestProperty("token", voda.getToken());
             statusCode=webConnection.getResponseCode();
-            if(statusCode==500 || statusCode==401){
+            if(statusCode==500){
                     voda.generateToken();
             }
         }catch(Exception e){
