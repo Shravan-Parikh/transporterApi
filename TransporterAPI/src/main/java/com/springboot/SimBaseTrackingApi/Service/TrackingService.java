@@ -8,6 +8,8 @@ import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +23,10 @@ import com.springboot.SimBaseTrackingApi.Dao.TrackingDao;
 import com.springboot.SimBaseTrackingApi.Entity.TrackingData;
 import com.springboot.SimBaseTrackingApi.Entity.TrackingEntity;
 import com.springboot.SimBaseTrackingApi.Status.ConsentStatus;
+import lombok.extern.slf4j.Slf4j;
 
 
+@Slf4j
 @Service
 public class TrackingService {
 
@@ -46,10 +50,13 @@ public class TrackingService {
         String jioConsentUrl;
 
         @Value("${JioGetAllDeviceUrl}")
-        String validateJioTokenUrl;
+        String jioGetAllDeviceUrl;
+
+        @Value("${JioLocationUrl}")
+        String jioLocationUrl;
 
         @Value("${VodafoneConsentStatusUrl}")
-        String validateVodaTokenUrl;
+        String vodafoneConsentStatusUrl;
 
         @Value ("${VodafoneConsentUrl}") 
         String vodaConsentUrl;
@@ -58,7 +65,7 @@ public class TrackingService {
         String airtelConsentUrl;
 
         @Value("${AirtelGetAllDeviceUrl}")
-        String validateAirtelTokenUrl;
+        String airtelGetAllDeviceUrl;
 
         @Value ("${OperatorUrl}")
         String operatorUrl;
@@ -94,7 +101,7 @@ public class TrackingService {
 
             if(operatorName.equals("Reliance Jio Infocomm Ltd (RJIL)")){
 
-                tokenValidator.validateJioToken(new URL(validateJioTokenUrl));
+                tokenValidator.validateJioToken(new URL(jioGetAllDeviceUrl));
                 URL weburl=new URL(jioConsentUrl);
                 webConnection = (HttpURLConnection) weburl.openConnection();
                 webConnection.setRequestMethod("POST");
@@ -110,7 +117,7 @@ public class TrackingService {
             }
             else if(operatorName.equals("Vodafone Idea Ltd (formerly Vodafone India Ltd)")){    
 
-                tokenValidator.validateVodafoneToken(new URL(validateVodaTokenUrl));
+                tokenValidator.validateVodafoneToken(new URL(vodafoneConsentStatusUrl));
                 URL weburl=new URL(vodaConsentUrl);
                 webConnection = (HttpURLConnection) weburl.openConnection();
                 webConnection.setRequestMethod("POST");
@@ -128,7 +135,7 @@ public class TrackingService {
             }
             else if(operatorName.equals("Bharti Airtel Ltd")){    
 
-                tokenValidator.validateAirtelResourceToken(new URL(validateAirtelTokenUrl));
+                tokenValidator.validateAirtelResourceToken(new URL(airtelGetAllDeviceUrl));
                 URL weburl=new URL(airtelConsentUrl);
                 webConnection = (HttpURLConnection) weburl.openConnection();
                 webConnection.setRequestMethod("POST");
@@ -157,18 +164,44 @@ public class TrackingService {
                     } 
                     int statusCode=webConnection.getResponseCode();
                     if(statusCode==200 || statusCode==202){
+                        String msisdn="SUCCESS";
+                        if(operatorName.equals("Vodafone Idea Ltd (formerly Vodafone India Ltd)")){
+                            try (BufferedReader br = new BufferedReader(
+                                new InputStreamReader(webConnection.getInputStream(), StandardCharsets.UTF_8))) {
+                                StringBuilder resp = new StringBuilder();
+                                String respLine = null;
+                                while ((respLine = br.readLine()) != null) {
+                                    resp.append(respLine.trim());
+                                }  
+                                JSONObject respJson = new JSONObject(resp.toString());
+                                try{
+                                    msisdn=respJson
+                                            .getJSONArray("failureList")
+                                            .getJSONObject(0)
+                                            .getString("msisdn");
+                                }catch(Exception e){
+                                    msisdn="SUCCESS";
+                                }
+                            }
+                        }
+                        if(msisdn.equals("SUCCESS")){
                         data.setMobileNumber(mobileNumber);
                         data.setDriverName(driverName);
                         data.setOperatorName(operatorName);
                         data.setStatus("PENDING");
                         trackingDao.save(data);
                         status.setStatus("Consent Send to driver");
+                        }
+                        else{
+                            status.setStatus("Sending Consent disallowed by "+operatorName);
+                        }
                     }
                     else if(statusCode==400){
-                        status.setStatus("Sending Consent disallowed by Operator");
+                        status.setStatus("Sending Consent disallowed by "+operatorName);
                     }
                     else{
                         status.setError("Internal Server error");
+                        log.info(statusCode+" Error code while registering Device");
                     }
                 }
                 else{
@@ -180,6 +213,7 @@ public class TrackingService {
             }
         }catch(Exception e){
             status.setError("Internal Server error");
+            log.info(e.toString());
         }
         return status;         
     }   
@@ -194,6 +228,81 @@ public class TrackingService {
             consent.setError("Device not found");;
         }
         return consent;  
+    }
+
+    public ConsentStatus deRegister(String mobileNumber){
+
+        ConsentStatus deleteStatus=new ConsentStatus();
+        try{
+            TrackingData userDetails=trackingDao.findByMobileNumber(mobileNumber).get(0);
+            String operatorName=userDetails.getOperatorName();
+            HttpURLConnection webConnection=null;
+            if(operatorName.equals("Reliance Jio Infocomm Ltd (RJIL)")){
+
+                tokenValidator.validateJioToken(new URL(jioGetAllDeviceUrl));
+                URL url=new URL(jioLocationUrl+mobileNumber);
+                webConnection = (HttpURLConnection) url.openConnection();
+                webConnection.setRequestMethod("DELETE");
+                webConnection.setRequestProperty("x-access-token", jio.getToken());
+                webConnection.setDoOutput(true);   
+            }
+            else if(operatorName.equals("Vodafone Idea Ltd (formerly Vodafone India Ltd)")){
+
+                tokenValidator.validateVodafoneToken(new URL(vodafoneConsentStatusUrl));
+                long id;
+                URL weburl=new URL(vodafoneConsentStatusUrl+"?search=91"+mobileNumber);
+                webConnection = (HttpURLConnection) weburl.openConnection();
+                webConnection.setRequestMethod("GET");
+                webConnection.setRequestProperty("token", voda.getToken());
+                webConnection.setDoOutput(true);
+                webConnection.connect();
+
+                try (BufferedReader br = new BufferedReader(new InputStreamReader(webConnection.getInputStream(), StandardCharsets.UTF_8))) {
+                    StringBuilder resp = new StringBuilder();
+                    String respLine = null;
+                    while ((respLine = br.readLine()) != null) {
+                        resp.append(respLine.trim());
+                    }            
+                 id=new JSONObject(resp.toString())
+                                        .getJSONArray("data")
+                                        .getJSONObject(0)
+                                        .getLong("id");
+                }  
+                URL deleteUrl=new URL(vodafoneConsentStatusUrl+"/"+id+"?permanent=true");
+                webConnection = (HttpURLConnection) deleteUrl.openConnection();
+                webConnection.setRequestMethod("DELETE");
+                webConnection.setRequestProperty("token", voda.getToken());
+                webConnection.setDoOutput(true);
+            }
+            else if(operatorName.equals("Bharti Airtel Ltd")){
+
+                tokenValidator.validateAirtelResourceToken(new URL(airtelGetAllDeviceUrl));
+                URL url=new URL(airtelGetAllDeviceUrl+"91"+mobileNumber);
+                webConnection = (HttpURLConnection) url.openConnection();
+                webConnection.setRequestMethod("DELETE");
+                webConnection.setRequestProperty("access_token", airtel.getResourceToken());
+                webConnection.setDoOutput(true);
+            }
+            int statusCode=webConnection.getResponseCode();
+            if(statusCode==204 || statusCode==200){
+                userDetails.setStatus("REJECTED");
+                trackingDao.save(userDetails);
+                deleteStatus.setStatus("Device Deregistered");
+            }
+            else if(statusCode==404){
+                userDetails.setStatus("REJECTED");
+                trackingDao.save(userDetails);
+                deleteStatus.setStatus("Not a registered number");
+            }
+            else{
+                deleteStatus.setError("Failed");
+                log.info(statusCode+" Error code while deregistering Device");
+            }
+        }catch(Exception e){
+            deleteStatus.setError("Internal Server error");
+            log.info(e.toString());
+        }
+        return deleteStatus;
     }
 
     public String getOperaterName(String mobileNumber) throws IOException{
