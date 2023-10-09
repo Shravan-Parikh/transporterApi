@@ -19,6 +19,9 @@ import com.springboot.SimBaseTrackingApi.Authentication.JioAuthentication;
 import com.springboot.SimBaseTrackingApi.Authentication.VodafoneAuthentication;
 import com.springboot.SimBaseTrackingApi.Entity.TrackingData;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 public class LocationGenerator {
 
@@ -45,6 +48,8 @@ public class LocationGenerator {
 
     @Async
     public void TrackingResponse(TrackingData data) throws URISyntaxException, IOException {
+
+        try{
 
         String operatorName=data.getOperatorName();
         String mobileNumber=data.getMobileNumber();
@@ -140,5 +145,8 @@ public class LocationGenerator {
             traccarConnection.setDoOutput(true);
             traccarConnection.getResponseCode();
         }
+    }catch(Exception e){
+        log.info(e.toString());
+    }
     }
 }

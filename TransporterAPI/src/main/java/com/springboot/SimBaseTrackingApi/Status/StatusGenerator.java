@@ -22,8 +22,11 @@ import com.springboot.SimBaseTrackingApi.Authentication.JioAuthentication;
 import com.springboot.SimBaseTrackingApi.Authentication.VodafoneAuthentication;
 import com.springboot.SimBaseTrackingApi.Dao.TrackingDao;
 import com.springboot.SimBaseTrackingApi.Entity.TrackingData;
+
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @Component
 public class StatusGenerator {
 
@@ -54,6 +57,7 @@ public class StatusGenerator {
     @Async
     public void ConsentStatus(TrackingData data) throws IOException, URISyntaxException{
 
+        try{
             String pseudoStatus="";
             boolean tracking=false;
 
@@ -151,6 +155,9 @@ public class StatusGenerator {
                 data.setStatus("REJECTED");
             }
             trackingDao.save(data);
+        }catch(Exception e){
+            log.info(e.toString());
+        }
     }
 
     public String StartTracking(String mobileNumber, String operatorName) throws IOException, URISyntaxException{

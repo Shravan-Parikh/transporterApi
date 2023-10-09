@@ -31,4 +31,10 @@ public class TrackingController {
         return new ResponseEntity<>(service.getConsentStatus(mobileNumber), HttpStatus.OK);
     }
 
+    @DeleteMapping("/deRegister/{mobileNumber}")
+    public ResponseEntity<ConsentStatus> getDeRegisterResponse(@PathVariable String mobileNumber) 
+    throws IOException{
+        return new ResponseEntity<>(service.deRegister(mobileNumber), HttpStatus.OK);
+    }
+
 }
