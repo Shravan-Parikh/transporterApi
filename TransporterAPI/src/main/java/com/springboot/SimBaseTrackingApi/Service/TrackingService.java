@@ -289,7 +289,7 @@ public class TrackingService {
                 trackingDao.save(userDetails);
                 deleteStatus.setStatus("Device Deregistered");
             }
-            else if(statusCode==404){
+            else if(statusCode==404 || statusCode==400){
                 userDetails.setStatus("REJECTED");
                 trackingDao.save(userDetails);
                 deleteStatus.setStatus("Not a registered number");
