@@ -34,6 +34,7 @@ public class JioAuthentication {
     @Scheduled(fixedRate = 82800000)
     public  void generateToken() throws URISyntaxException, IOException{
         
+        //Generating the token and initializing the "token" variable with that value
         URL weburl=new URL(jioUrl);
         HttpURLConnection webConnection = (HttpURLConnection) weburl.openConnection();
         webConnection.setRequestMethod("POST");
@@ -44,11 +45,13 @@ public class JioAuthentication {
          JSONObject jsonData = new JSONObject();
             jsonData.put("username", this.username);
             jsonData.put("password", this.password);
+            // We are writing the JSON body to outputstream
             try (OutputStream outStream = webConnection.getOutputStream()) {
                 byte[] reqBody = jsonData.toString().getBytes(StandardCharsets.UTF_8);
                 outStream.write(reqBody, 0, reqBody.length);
             }
 
+            // We are reading the response using getInputStream()
         try (BufferedReader br = new BufferedReader(new InputStreamReader(webConnection.getInputStream(), StandardCharsets.UTF_8))) {
             StringBuilder resp = new StringBuilder();
             String respLine = null;

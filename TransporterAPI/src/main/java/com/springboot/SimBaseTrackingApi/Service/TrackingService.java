@@ -101,6 +101,7 @@ public class TrackingService {
 
             if(operatorName.equals("Reliance Jio Infocomm Ltd (RJIL)")){
 
+                // Validating the token before proceed
                 tokenValidator.validateJioToken(new URL(jioGetAllDeviceUrl));
                 URL weburl=new URL(jioConsentUrl);
                 webConnection = (HttpURLConnection) weburl.openConnection();
@@ -165,6 +166,8 @@ public class TrackingService {
                     int statusCode=webConnection.getResponseCode();
                     if(statusCode==200 || statusCode==202){
                         String msisdn="SUCCESS";
+                        // Vodafone gives response code 200 for a success or failure, so we are checking the response then
+                        // procceding accordingly and Airtel gives response code 202, and Jio 200, for success, in this case.
                         if(operatorName.equals("Vodafone Idea Ltd (formerly Vodafone India Ltd)")){
                             try (BufferedReader br = new BufferedReader(
                                 new InputStreamReader(webConnection.getInputStream(), StandardCharsets.UTF_8))) {
@@ -248,6 +251,8 @@ public class TrackingService {
             }
             else if(operatorName.equals("Vodafone Idea Ltd (formerly Vodafone India Ltd)")){
 
+                // We need the id of a number to delete it, if it is a Vodafone number. 
+                // The id generates at the time of sending consent
                 tokenValidator.validateVodafoneToken(new URL(vodafoneConsentStatusUrl));
                 long id;
                 URL weburl=new URL(vodafoneConsentStatusUrl+"?search=91"+mobileNumber);
