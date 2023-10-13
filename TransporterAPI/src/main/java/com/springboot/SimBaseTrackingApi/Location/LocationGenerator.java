@@ -130,6 +130,8 @@ public class LocationGenerator {
             }  
         }
         if(latitude!=null && longitude!=null && serverTime!=null){
+            // We can't leave a blank space inbetween a URL, so we are breaking up the timestamp and between
+            // the gap of date and time we can add %20. We are sending this information to Trccar service from here.
             String date=serverTime.substring(0, 10);
             String time=serverTime.substring(11, 19);
             URL weburl=new URL(traccarUrl
