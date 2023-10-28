@@ -151,7 +151,7 @@ public class StatusGenerator {
             }
             else if(pseudoStatus.equals("REJECTED")
             || pseudoStatus.equals("REVOKED") ||pseudoStatus.equals("EXPIRED")
-            || pseudoStatus.equals("DEREGISTERED")){
+            || pseudoStatus.equals("DEREGISTERED") || pseudoStatus.equals("CONSENT_DENIED")){
                 data.setStatus("REJECTED");
             }
             trackingDao.save(data);
