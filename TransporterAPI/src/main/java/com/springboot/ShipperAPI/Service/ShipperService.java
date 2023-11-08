@@ -10,6 +10,7 @@ import com.springboot.ShipperAPI.Model.PostShipper;
 import com.springboot.ShipperAPI.Model.UpdateShipper;
 import com.springboot.ShipperAPI.Response.ShipperCreateResponse;
 import com.springboot.ShipperAPI.Response.ShipperUpdateResponse;
+import com.springboot.ShipperAPI.Response.TransporterResponse;
 
 public interface ShipperService {
 
@@ -18,6 +19,8 @@ public interface ShipperService {
 	public List<Shipper> getShippers(Boolean companyApproved, String phoneNo, String emailId, Integer pageNo);
 
 	public ShipperGetResponse getOneShipper(String shipperId);
+	
+	public TransporterResponse getTransporterList(String shipperId);
 
 	public ShipperUpdateResponse updateShipper(String shipperId, UpdateShipper shipper);
 
