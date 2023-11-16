@@ -23,6 +23,7 @@ import com.springboot.ShipperAPI.Model.PostShipper;
 import com.springboot.ShipperAPI.Model.UpdateShipper;
 import com.springboot.ShipperAPI.Response.ShipperCreateResponse;
 import com.springboot.ShipperAPI.Response.ShipperUpdateResponse;
+import com.springboot.ShipperAPI.Response.TransporterResponse;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -239,6 +240,32 @@ public class ShipperServiceImpl implements ShipperService {
 
 		log.info("getOneShiper response is returned");
 		return shipperGetResponse;
+	}
+	
+	public TransporterResponse getTransporterList(String shipperId) {
+		log.info("getOneShipper service is started");
+		Optional<Shipper> S = shipperdao.findById(shipperId);
+		if(S.isEmpty()) {
+			throw new EntityNotFoundException(Shipper.class, "id", shipperId.toString());
+		}
+		Shipper shipper=S.get();
+		    TransporterResponse transporterResponse=new TransporterResponse();
+			ArrayList<ShipperTransporterEmail> shipperTransporterEmailList=shipperTransporterEmailDao.findByShipperShipperId(S.get().getShipperId());
+			for(ShipperTransporterEmail shipperTransporterEmail:shipperTransporterEmailList){
+			transporterResponse.setTransporterId(shipperTransporterEmail.getTransporterId());
+			transporterResponse.setName(shipperTransporterEmail.getName());
+			transporterResponse.setPhoneNo(shipperTransporterEmail.getEmail());
+			transporterResponse.setEmail(shipperTransporterEmail.getPhoneNo());
+			}
+			transporterResponse.setCompanyName(shipper.getCompanyName());
+			transporterResponse.setGst(shipper.getGst());
+			transporterResponse.setCompanyStatus(shipper.getCompanyStatus());
+			transporterResponse.setKyc(shipper.getKyc());
+			transporterResponse.setShipperLocation(shipper.getShipperLocation());
+			transporterResponse.setCompanyApproved(shipper.isCompanyApproved());
+			transporterResponse.setAccountVerificationInProgress(shipper.isAccountVerificationInProgress());
+			
+			return transporterResponse;
 	}
 
 	@Transactional(rollbackFor = Exception.class)
