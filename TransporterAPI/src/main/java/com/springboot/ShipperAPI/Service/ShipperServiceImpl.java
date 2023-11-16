@@ -26,6 +26,8 @@ import com.springboot.ShipperAPI.Response.ShipperUpdateResponse;
 
 import lombok.extern.slf4j.Slf4j;
 
+import com.springboot.TransporterAPI.Dao.TransporterDao;
+import com.springboot.TransporterAPI.Entity.Transporter;
 import com.springboot.TransporterAPI.Exception.BusinessException;
 import com.springboot.TransporterAPI.Exception.EntityNotFoundException;
 
@@ -36,6 +38,9 @@ public class ShipperServiceImpl implements ShipperService {
 	@Autowired
 	ShipperDao shipperdao;
 
+	@Autowired
+	TransporterDao transporterdao;
+	
 	@Autowired
 	ShipperTransporterEmailDao shipperTransporterEmailDao;
 	@Transactional(rollbackFor = Exception.class)
@@ -239,6 +244,33 @@ public class ShipperServiceImpl implements ShipperService {
 
 		log.info("getOneShiper response is returned");
 		return shipperGetResponse;
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public Transporter getTransporterList(String shipperId) {
+		log.info("getTransporterList service is started");
+		String transporterId="";
+		Optional<Shipper> S1 = shipperdao.findById(shipperId);
+		if(S1.isEmpty()) {
+			throw new EntityNotFoundException(Shipper.class, "id", shipperId.toString());
+		}
+		Shipper shipper=S1.get();
+		Transporter transporter = new Transporter();
+	    ArrayList<ShipperTransporterEmail> shipperTransporterEmailList=shipperTransporterEmailDao.findByShipperShipperId(S1.get().getShipperId());
+		for(ShipperTransporterEmail shipperTransporterEmail:shipperTransporterEmailList) {
+			transporterId = shipperTransporterEmail.getTransporterId(); 
+			transporter.setTransporterId(transporterId);
+	}
+			
+		Optional<Transporter> t = transporterdao.findByTransporterId(transporterId);
+		if(t.isEmpty()) {
+				throw new EntityNotFoundException(Transporter.class,"id",transporterId);
+			}
+		
+		return t.get();
+			
+			
 	}
 
 	@Transactional(rollbackFor = Exception.class)
