@@ -271,7 +271,7 @@ public class ShipperServiceImpl implements ShipperService {
 		return t.get();
 			
 			
-	}
+	} //implementation of the method used by segregating the data by shipperId, then extracting the transporterId, and refering to the transporter table to get the list of transporter according to the refered transporterId
 
 	@Transactional(rollbackFor = Exception.class)
 	@Override
