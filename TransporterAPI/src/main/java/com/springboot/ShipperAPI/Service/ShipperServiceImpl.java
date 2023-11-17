@@ -251,13 +251,9 @@ public class ShipperServiceImpl implements ShipperService {
 	public Transporter getTransporterList(String shipperId) {
 		log.info("getTransporterList service is started");
 		String transporterId="";
-		Optional<Shipper> S1 = shipperdao.findById(shipperId);
-		if(S1.isEmpty()) {
-			throw new EntityNotFoundException(Shipper.class, "id", shipperId.toString());
-		}
-		Shipper shipper=S1.get();
 		Transporter transporter = new Transporter();
-	    ArrayList<ShipperTransporterEmail> shipperTransporterEmailList=shipperTransporterEmailDao.findByShipperShipperId(S1.get().getShipperId());
+		
+	    ArrayList<ShipperTransporterEmail> shipperTransporterEmailList=shipperTransporterEmailDao.findByShipperShipperId(shipperId);
 		for(ShipperTransporterEmail shipperTransporterEmail:shipperTransporterEmailList) {
 			transporterId = shipperTransporterEmail.getTransporterId(); 
 			transporter.setTransporterId(transporterId);
