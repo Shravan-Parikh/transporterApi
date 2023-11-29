@@ -3,7 +3,12 @@ package com.springboot.ShipperAPI.Response;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+
 import org.hibernate.annotations.CreationTimestamp;
+
+import com.springboot.ShipperAPI.Model.PostShipper.Roles;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,4 +35,11 @@ public class ShipperUpdateResponse {
 	public Timestamp timestamp;
 
 	private ArrayList<ArrayList<String>> transporterList;
+	
+	private String companyId; //optional
+	public enum Roles {
+		ADMIN, EDITOR, VIEWER
+	}
+	@Enumerated(EnumType.STRING)
+    private Roles roles;
 }

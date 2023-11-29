@@ -4,6 +4,8 @@ import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -40,6 +42,13 @@ public class Shipper {
 	private String companyStatus;
 	private String kyc;
 	private String shipperLocation;
+	private String companyId; //optional
+	public enum Roles {
+		ADMIN, EDITOR, VIEWER
+	}
+	 @Enumerated(EnumType.STRING)
+	    private Roles roles;
+
 
 	@Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
 	private boolean companyApproved;
