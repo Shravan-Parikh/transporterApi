@@ -1,8 +1,11 @@
 package com.springboot.ShipperAPI.Model;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,4 +29,10 @@ public class PostShipper {
 	private String companyStatus;
 	private String kyc;
 	private ArrayList<ArrayList<String>> transporterList;
+	private String companyId; //optional
+	public enum roles {
+		ADMIN, EDITOR, VIEWER
+	}
+	@Enumerated(EnumType.STRING)
+    private roles roles;
 }

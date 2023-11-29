@@ -65,6 +65,8 @@ public class ShipperServiceImpl implements ShipperService {
 			response.setGst(s.get().getGst());
 			response.setCompanyStatus(s.get().getCompanyStatus());
 			response.setCompanyApproved(s.get().isCompanyApproved());
+			response.setCompanyId(s.get().getCompanyId());
+			response.setRoles(ShipperCreateResponse.roles.VIEWER);
 			response.setAccountVerificationInProgress(s.get().isAccountVerificationInProgress());
 			response.setMessage(CommonConstants.ACCOUNT_EXIST);
 			response.setTimestamp(s.get().getTimestamp());
@@ -116,6 +118,27 @@ public class ShipperServiceImpl implements ShipperService {
 		if(StringUtils.isNotBlank(temp)){
 			shipper.setCompanyStatus(temp.trim());
 			response.setCompanyStatus(temp.trim());
+		}
+		
+		temp=postshipper.getCompanyId();
+		if(StringUtils.isNotBlank(temp)){
+			shipper.setCompanyId(temp.trim());
+			response.setCompanyId(temp.trim());
+		}
+		
+		temp = String.valueOf(postshipper.getRoles());
+		if ("ADMIN".equals(temp)) {
+			shipper.setRoles(Shipper.roles.ADMIN);
+			response.setRoles(ShipperCreateResponse.roles.ADMIN);
+		} else if ("EDITOR".equals(temp)) {
+			shipper.setRoles(Shipper.roles.EDITOR);
+			response.setRoles(ShipperCreateResponse.roles.EDITOR);
+		} else if ("VIEWER".equals(temp)) {
+			shipper.setRoles(Shipper.roles.VIEWER);
+			response.setRoles(ShipperCreateResponse.roles.VIEWER);
+		} else if (postshipper.getRoles() != null) {
+			shipper.setRoles(Shipper.roles.VIEWER);
+			response.setRoles(ShipperCreateResponse.roles.VIEWER);
 		}
 
 		shipper.setCompanyApproved(false);
@@ -229,16 +252,24 @@ public class ShipperServiceImpl implements ShipperService {
 		shipperGetResponse.setShipperLocation(shipper.getShipperLocation());
 		shipperGetResponse.setCompanyApproved(shipper.isCompanyApproved());
 		shipperGetResponse.setAccountVerificationInProgress(shipper.isAccountVerificationInProgress());
-
+		shipperGetResponse.setCompanyId(shipper.getCompanyId());
+		String temp = String.valueOf(shipper.getRoles());
+		if ("ADMIN".equals(temp)) {
+			shipperGetResponse.setRoles(ShipperGetResponse.roles.ADMIN);
+		} else if ("EDITOR".equals(temp)) {
+			shipperGetResponse.setRoles(ShipperGetResponse.roles.EDITOR);
+		} else if ("VIEWER".equals(temp)) {
+			shipperGetResponse.setRoles(ShipperGetResponse.roles.VIEWER);
+		} 
 		ArrayList<ShipperTransporterEmail> shipperTransporterEmailList=shipperTransporterEmailDao.findByShipperShipperId(S.get().getShipperId());
 		ArrayList<ArrayList<String>> emailList=new ArrayList<>();
 		for(ShipperTransporterEmail shipperTransporterEmail:shipperTransporterEmailList){
-			ArrayList<String> temp=new ArrayList<>();
-			temp.add(shipperTransporterEmail.getEmail());
-			temp.add(shipperTransporterEmail.getName());
-			temp.add(shipperTransporterEmail.getPhoneNo());
-			temp.add(shipperTransporterEmail.getTransporterId());
-			emailList.add(temp);
+			ArrayList<String> temp1=new ArrayList<>();
+			temp1.add(shipperTransporterEmail.getEmail());
+			temp1.add(shipperTransporterEmail.getName());
+			temp1.add(shipperTransporterEmail.getPhoneNo());
+			temp1.add(shipperTransporterEmail.getTransporterId());
+			emailList.add(temp1);
 		}
 		shipperGetResponse.setTransporterList(emailList);
 
@@ -324,10 +355,30 @@ public class ShipperServiceImpl implements ShipperService {
 		if(updateShipper.getCompanyApproved() != null) {
 			shipper.setCompanyApproved(updateShipper.getCompanyApproved());
 		}
+		
+		if(updateShipper.getCompanyId() != null) {
+			shipper.setCompanyId(updateShipper.getCompanyId());
+		}
 
 		if(updateShipper.getAccountVerificationInProgress() != null) {
 			shipper.setAccountVerificationInProgress(updateShipper.getAccountVerificationInProgress());
 		}
+		
+		temp = String.valueOf(updateShipper.getRoles());
+		if ("ADMIN".equals(temp)) {
+			shipper.setRoles(Shipper.roles.ADMIN);
+			updateResponse.setRoles(ShipperUpdateResponse.roles.ADMIN);
+		} else if ("EDITOR".equals(temp)) {
+			shipper.setRoles(Shipper.roles.EDITOR);
+			updateResponse.setRoles(ShipperUpdateResponse.roles.EDITOR);
+		} else if ("VIEWER".equals(temp)) {
+			shipper.setRoles(Shipper.roles.VIEWER);
+			updateResponse.setRoles(ShipperUpdateResponse.roles.VIEWER);
+		} else if (updateShipper.getRoles() != null) {
+			shipper.setRoles(Shipper.roles.VIEWER);
+			updateResponse.setRoles(ShipperUpdateResponse.roles.VIEWER);
+		}
+
 
 		shipperdao.save(shipper);
 		if(updateShipper.getTransporterList()!=null){
@@ -355,10 +406,20 @@ public class ShipperServiceImpl implements ShipperService {
 		updateResponse.setShipperLocation(shipper.getShipperLocation());
 		updateResponse.setKyc(shipper.getKyc());
 		updateResponse.setCompanyApproved(shipper.isCompanyApproved());
+		updateResponse.setCompanyId(shipper.getCompanyId());
 		updateResponse.setAccountVerificationInProgress(shipper.isAccountVerificationInProgress());
 		updateResponse.setStatus(CommonConstants.SUCCESS);
 		updateResponse.setMessage(CommonConstants.UPDATE_SUCCESS);
 		updateResponse.setTimestamp(shipper.getTimestamp());
+		
+		temp = String.valueOf(updateShipper.getRoles());
+		if ("ADMIN".equals(temp)) {
+			updateResponse.setRoles(ShipperUpdateResponse.roles.ADMIN);
+		} else if ("EDITOR".equals(temp)) {
+			updateResponse.setRoles(ShipperUpdateResponse.roles.EDITOR);
+		} else if ("VIEWER".equals(temp)) {
+			updateResponse.setRoles(ShipperUpdateResponse.roles.VIEWER);
+		}
 
 		log.info("updateShipper response is returned");
 		return updateResponse;
