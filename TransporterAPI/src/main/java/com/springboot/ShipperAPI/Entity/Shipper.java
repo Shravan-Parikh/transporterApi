@@ -43,11 +43,11 @@ public class Shipper {
 	private String kyc;
 	private String shipperLocation;
 	private String companyId; //optional
-	public enum Roles {
+	public enum roles {
 		ADMIN, EDITOR, VIEWER
 	}
 	 @Enumerated(EnumType.STRING)
-	    private Roles roles;
+	    private roles roles;
 
 
 	@Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")

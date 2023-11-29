@@ -1,7 +1,6 @@
 package com.springboot.ShipperAPI.Response;
 
 import com.springboot.ShipperAPI.Entity.Shipper;
-import com.springboot.ShipperAPI.Model.PostShipper.Roles;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -37,9 +36,9 @@ public class ShipperGetResponse {
     private String companyId; //optional
     
     @Enumerated(EnumType.STRING)
-    private Roles roles;
+    private roles roles;
     
-	public enum Roles {
+	public enum roles {
 		ADMIN, EDITOR, VIEWER
 	}
 	

@@ -8,8 +8,6 @@ import javax.persistence.Enumerated;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import com.springboot.ShipperAPI.Model.PostShipper.Roles;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -37,9 +35,9 @@ public class ShipperUpdateResponse {
 	private ArrayList<ArrayList<String>> transporterList;
 	
 	private String companyId; //optional
-	public enum Roles {
+	public enum roles {
 		ADMIN, EDITOR, VIEWER
 	}
 	@Enumerated(EnumType.STRING)
-    private Roles roles;
+    private roles roles;
 }

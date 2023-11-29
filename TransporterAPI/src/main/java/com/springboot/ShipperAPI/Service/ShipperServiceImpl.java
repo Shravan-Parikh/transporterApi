@@ -66,7 +66,7 @@ public class ShipperServiceImpl implements ShipperService {
 			response.setCompanyStatus(s.get().getCompanyStatus());
 			response.setCompanyApproved(s.get().isCompanyApproved());
 			response.setCompanyId(s.get().getCompanyId());
-			response.setRoles(ShipperCreateResponse.Roles.VIEWER);
+			response.setRoles(ShipperCreateResponse.roles.VIEWER);
 			response.setAccountVerificationInProgress(s.get().isAccountVerificationInProgress());
 			response.setMessage(CommonConstants.ACCOUNT_EXIST);
 			response.setTimestamp(s.get().getTimestamp());
@@ -128,17 +128,17 @@ public class ShipperServiceImpl implements ShipperService {
 		
 		temp = String.valueOf(postshipper.getRoles());
 		if ("ADMIN".equals(temp)) {
-			shipper.setRoles(Shipper.Roles.ADMIN);
-			response.setRoles(ShipperCreateResponse.Roles.ADMIN);
+			shipper.setRoles(Shipper.roles.ADMIN);
+			response.setRoles(ShipperCreateResponse.roles.ADMIN);
 		} else if ("EDITOR".equals(temp)) {
-			shipper.setRoles(Shipper.Roles.EDITOR);
-			response.setRoles(ShipperCreateResponse.Roles.EDITOR);
+			shipper.setRoles(Shipper.roles.EDITOR);
+			response.setRoles(ShipperCreateResponse.roles.EDITOR);
 		} else if ("VIEWER".equals(temp)) {
-			shipper.setRoles(Shipper.Roles.VIEWER);
-			response.setRoles(ShipperCreateResponse.Roles.VIEWER);
+			shipper.setRoles(Shipper.roles.VIEWER);
+			response.setRoles(ShipperCreateResponse.roles.VIEWER);
 		} else if (postshipper.getRoles() != null) {
-			shipper.setRoles(Shipper.Roles.VIEWER);
-			response.setRoles(ShipperCreateResponse.Roles.VIEWER);
+			shipper.setRoles(Shipper.roles.VIEWER);
+			response.setRoles(ShipperCreateResponse.roles.VIEWER);
 		}
 
 		shipper.setCompanyApproved(false);
@@ -255,11 +255,11 @@ public class ShipperServiceImpl implements ShipperService {
 		shipperGetResponse.setCompanyId(shipper.getCompanyId());
 		String temp = String.valueOf(shipper.getRoles());
 		if ("ADMIN".equals(temp)) {
-			shipperGetResponse.setRoles(ShipperGetResponse.Roles.ADMIN);
+			shipperGetResponse.setRoles(ShipperGetResponse.roles.ADMIN);
 		} else if ("EDITOR".equals(temp)) {
-			shipperGetResponse.setRoles(ShipperGetResponse.Roles.EDITOR);
+			shipperGetResponse.setRoles(ShipperGetResponse.roles.EDITOR);
 		} else if ("VIEWER".equals(temp)) {
-			shipperGetResponse.setRoles(ShipperGetResponse.Roles.VIEWER);
+			shipperGetResponse.setRoles(ShipperGetResponse.roles.VIEWER);
 		} 
 		ArrayList<ShipperTransporterEmail> shipperTransporterEmailList=shipperTransporterEmailDao.findByShipperShipperId(S.get().getShipperId());
 		ArrayList<ArrayList<String>> emailList=new ArrayList<>();
@@ -366,17 +366,17 @@ public class ShipperServiceImpl implements ShipperService {
 		
 		temp = String.valueOf(updateShipper.getRoles());
 		if ("ADMIN".equals(temp)) {
-			shipper.setRoles(Shipper.Roles.ADMIN);
-			updateResponse.setRoles(ShipperUpdateResponse.Roles.ADMIN);
+			shipper.setRoles(Shipper.roles.ADMIN);
+			updateResponse.setRoles(ShipperUpdateResponse.roles.ADMIN);
 		} else if ("EDITOR".equals(temp)) {
-			shipper.setRoles(Shipper.Roles.EDITOR);
-			updateResponse.setRoles(ShipperUpdateResponse.Roles.EDITOR);
+			shipper.setRoles(Shipper.roles.EDITOR);
+			updateResponse.setRoles(ShipperUpdateResponse.roles.EDITOR);
 		} else if ("VIEWER".equals(temp)) {
-			shipper.setRoles(Shipper.Roles.VIEWER);
-			updateResponse.setRoles(ShipperUpdateResponse.Roles.VIEWER);
+			shipper.setRoles(Shipper.roles.VIEWER);
+			updateResponse.setRoles(ShipperUpdateResponse.roles.VIEWER);
 		} else if (updateShipper.getRoles() != null) {
-			shipper.setRoles(Shipper.Roles.VIEWER);
-			updateResponse.setRoles(ShipperUpdateResponse.Roles.VIEWER);
+			shipper.setRoles(Shipper.roles.VIEWER);
+			updateResponse.setRoles(ShipperUpdateResponse.roles.VIEWER);
 		}
 
 
@@ -414,11 +414,11 @@ public class ShipperServiceImpl implements ShipperService {
 		
 		temp = String.valueOf(updateShipper.getRoles());
 		if ("ADMIN".equals(temp)) {
-			updateResponse.setRoles(ShipperUpdateResponse.Roles.ADMIN);
+			updateResponse.setRoles(ShipperUpdateResponse.roles.ADMIN);
 		} else if ("EDITOR".equals(temp)) {
-			updateResponse.setRoles(ShipperUpdateResponse.Roles.EDITOR);
+			updateResponse.setRoles(ShipperUpdateResponse.roles.EDITOR);
 		} else if ("VIEWER".equals(temp)) {
-			updateResponse.setRoles(ShipperUpdateResponse.Roles.VIEWER);
+			updateResponse.setRoles(ShipperUpdateResponse.roles.VIEWER);
 		}
 
 		log.info("updateShipper response is returned");

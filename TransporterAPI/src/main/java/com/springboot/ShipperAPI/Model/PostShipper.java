@@ -6,7 +6,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
-import com.springboot.ShipperAPI.Entity.Shipper.Roles;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,9 +30,9 @@ public class PostShipper {
 	private String kyc;
 	private ArrayList<ArrayList<String>> transporterList;
 	private String companyId; //optional
-	public enum Roles {
+	public enum roles {
 		ADMIN, EDITOR, VIEWER
 	}
 	@Enumerated(EnumType.STRING)
-    private Roles roles;
+    private roles roles;
 }

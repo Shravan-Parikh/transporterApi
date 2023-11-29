@@ -8,9 +8,6 @@ import java.util.ArrayList;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-
-import com.springboot.ShipperAPI.Model.PostShipper.Roles;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -29,9 +26,9 @@ public class UpdateShipper {
 	private ArrayList<ArrayList<String>> transporterList;
 	
 	private String companyId; //optional
-	public enum Roles {
+	public enum roles {
 		ADMIN, EDITOR, VIEWER
 	}
 	@Enumerated(EnumType.STRING)
-    private Roles roles;
+    private roles roles;
 }
