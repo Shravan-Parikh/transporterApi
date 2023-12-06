@@ -8,6 +8,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.ZoneId;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +60,7 @@ public class SavingData {
         
         // First generating the authToken and sek then using it to get details by date
         ewayTokenGenerator.generateToken(credentialsData.getUsername(), credentialsData.getPassword(), credentialsData.getGstin());
-        URL weburl=new URL(getEwayBillDetailsByDateUrl+LocalDate.now().toString());
+        URL weburl=new URL(getEwayBillDetailsByDateUrl+LocalDate.now(ZoneId.of("Asia/Kolkata")).toString());
         String authString="Bearer "+accessToken;
         HttpURLConnection webConnection = (HttpURLConnection) weburl.openConnection();
         webConnection.setRequestMethod("GET");

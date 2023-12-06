@@ -22,7 +22,7 @@ public class SavingDataScheduledTask {
     
     //Every 6 hour interval and at 11:59:00 pm everyday
     @Scheduled(fixedRate = 21600000)
-    @Scheduled(cron="0 59 23 ? * ?")
+    @Scheduled(cron="0 59 23 ? * ?", zone="IST")
     public void getList() throws URISyntaxException, IOException {
 
         List<EwayBillUsers> data = credentialsDao.findAll();
