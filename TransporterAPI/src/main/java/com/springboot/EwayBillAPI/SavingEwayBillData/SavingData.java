@@ -7,7 +7,9 @@ import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 import org.json.JSONArray;
@@ -199,6 +201,7 @@ public class SavingData {
                         ewayBillData.setTransactionType(transactionType);
                         ewayBillData.setOtherValue(otherValue);
                         ewayBillData.setCessNonAdvolValue(cessNonAdvolValue);
+                        ewayBillData.setTimestamp(Timestamp.valueOf(LocalDateTime.now(ZoneId.of("Asia/Kolkata"))));
 
                         ewayBillDetailsDao.save(ewayBillData);
 

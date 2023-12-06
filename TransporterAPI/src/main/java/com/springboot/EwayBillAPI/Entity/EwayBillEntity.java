@@ -65,6 +65,5 @@ public class EwayBillEntity {
     private double otherValue;
     private double cessNonAdvolValue;
 
-    @CreationTimestamp
 	public Timestamp timestamp;
 }
