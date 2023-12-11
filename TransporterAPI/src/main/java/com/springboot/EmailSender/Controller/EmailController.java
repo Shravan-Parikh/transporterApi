@@ -23,7 +23,7 @@ public class EmailController {
     
     @PostMapping("/sendInviteEmail")
     public ResponseEntity<String> sendEmail(@RequestBody EmailMessage emailMessage) {
-        this.emailSenderService.sendEmail(emailMessage.getReceiverMailId(), emailMessage.getSenderName());
+        this.emailSenderService.sendEmail(emailMessage);
         return ResponseEntity.ok("Invite Email Successfully Send");
     }
 } 
