@@ -51,8 +51,8 @@ public class SavingData {
     @Value("${EwayBillAccessToken}")
     String accessToken;
 
-    @Value("${GetEwayBillDetailsByDateUrl}")
-    String getEwayBillDetailsByDateUrl;
+    @Value("${GetEwayBillDetailsByDateByRecieverUrl}")
+    String getEwayBillDetailsByDateByRecieverUrl;
 
     @Value("${GetEwayBillDetailsByEwbNo}")
     String getEwayBillDetailsByEwbNoUrl;
@@ -62,7 +62,7 @@ public class SavingData {
         
         // First generating the authToken and sek then using it to get details by date
         ewayTokenGenerator.generateToken(credentialsData.getUsername(), credentialsData.getPassword(), credentialsData.getGstin());
-        URL weburl=new URL(getEwayBillDetailsByDateUrl+LocalDate.now(ZoneId.of("Asia/Kolkata")).minusDays(1).toString());
+        URL weburl=new URL(getEwayBillDetailsByDateByRecieverUrl+LocalDate.now(ZoneId.of("Asia/Kolkata")).minusDays(1).toString());
         String authString="Bearer "+accessToken;
         HttpURLConnection webConnection = (HttpURLConnection) weburl.openConnection();
         webConnection.setRequestMethod("GET");
