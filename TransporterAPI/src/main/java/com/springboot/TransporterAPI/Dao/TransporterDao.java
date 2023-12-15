@@ -14,6 +14,9 @@ import com.springboot.TransporterAPI.Entity.Transporter;
 public interface TransporterDao extends JpaRepository<Transporter, String>  {
 	@Query("select t from Transporter t")
 	public List<Transporter> getAll(Pageable pageable);
+	
+	@Query("select t from Transporter t where t.transporterId = :transporterId")
+	public Optional<Transporter> findByTransporterId(String transporterId);
 
 	@Query("select t from Transporter t where t.phoneNo = :phoneNo")
 	public Optional<Transporter> findByPhoneNo(String phoneNo);

@@ -26,13 +26,18 @@ public class EmailMessage {
 	    private String receiverMailId;
 	 @NotBlank(message = "Sender Name Cannot Be Empty")
 	    private String senderName;
+	 private String companyId;     // optional
+	 private roles role;		   // optional
 
 	 @CreationTimestamp
 	    public Timestamp timestamp;
-	 
-	public enum emailSentStatus {
+
+	 public enum roles{            //optional
+		 ADMIN, EDTIOR, VIEWER
+	 }
+	 public enum emailSentStatus {
 			SENT, NOT_SENT
-		}
+	 }
 
 	  
 }

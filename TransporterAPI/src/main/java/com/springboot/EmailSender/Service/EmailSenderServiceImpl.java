@@ -1,5 +1,6 @@
 package com.springboot.EmailSender.Service;
 
+import com.springboot.EmailSender.Entities.EmailMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -20,7 +21,7 @@ public class EmailSenderServiceImpl implements EmailSenderService {
     private final JavaMailSender mailSender;
 	
 	// Sender's email that will be directly taken from env file
-	@Value("${email_name}")
+	 @Value("${email_name}")
 	 private String senderEmail;
 
     public EmailSenderServiceImpl(JavaMailSender mailSender) {
@@ -29,17 +30,25 @@ public class EmailSenderServiceImpl implements EmailSenderService {
 
     @Transactional(rollbackFor = Exception.class)
 	@Override
-    public emailSentStatus sendEmail(String receiverMailId, String senderName) {
+    public emailSentStatus sendEmail(EmailMessage emailMessage) {
+		String receiverMailId = emailMessage.getReceiverMailId();
+		String senderName = emailMessage.getSenderName();
+		String companyId = emailMessage.getCompanyId();
+
+		if (emailMessage.getRole() == null){
+			emailMessage.setRole(EmailMessage.roles.VIEWER);
+		}
+
 	    try {
 	    	 SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
 	         simpleMailMessage.setFrom(senderEmail);
 	         simpleMailMessage.setTo(receiverMailId); // requested from the user
 	         String Subject = senderName + " has invited you to log in to 'Liveasy'";
 	         simpleMailMessage.setSubject(Subject);
-	         String body = "Welcome to Liveasy, kindly login through the following url :- https://shipperwebapp.web.app/#/";
+	         String body = "Welcome to Liveasy, kindly login through the following url :- https://shipperwebapp.web.app/#/?companyId="+companyId+"&role="+ emailMessage.getRole();
 	         simpleMailMessage.setText(body);
 	      
-		 // mail sending function
+		     // mail sending function
 	         this.mailSender.send(simpleMailMessage);
 
 	         // status will be saved as SENT if the mail is sent successfully
