@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import com.springboot.EwayBillAPI.Authentication.EwayTokenGenerator;
 import com.springboot.EwayBillAPI.Dao.EwayBillUserDao;
 import com.springboot.EwayBillAPI.Entity.EwayBillUsers;
 
@@ -20,6 +22,9 @@ public class SavingDataScheduledTask {
 
     @Autowired
     public SavingData savingData;
+
+    @Autowired
+    public EwayTokenGenerator ewayTokenGenerator;
     
     //Everyday at 12:05 am and 1:05 am
     @Scheduled(cron="0 05 0-1 ? * ?", zone="IST")
@@ -31,7 +36,9 @@ public class SavingDataScheduledTask {
 
         if(data.size()>0){
             for(EwayBillUsers credentialData: data){
-                savingData.savingEwayBillData(credentialData);
+                // First generating the authToken and sek then using it to get details by date
+                ewayTokenGenerator.generateToken(credentialData.getUsername(), credentialData.getPassword(), credentialData.getGstin());
+                savingData.savingEwayBillData(credentialData,ewayTokenGenerator.getAuthToken(), ewayTokenGenerator.getSek());
             }
         }
     }
