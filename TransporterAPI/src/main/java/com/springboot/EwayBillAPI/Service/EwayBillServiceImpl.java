@@ -63,17 +63,20 @@ public class EwayBillServiceImpl implements EwayBillService{
                 Timestamp fromTimestamp=Timestamp.valueOf(fromDate.trim() + " 00:00:00");
                 Timestamp toTimestamp=Timestamp.valueOf(toDate.trim() + " 23:59:59");
                 List<EwayBillEntity>  ewayBillDetails=new ArrayList<EwayBillEntity>();
+                String Gstin="";
                 if(fromGstin!=null){
                     ewayBillDetails= ewayBillDetailsDao.findByFromGstinAndTimestampBetween(fromGstin, 
                     fromTimestamp, toTimestamp);
+                    Gstin=fromGstin;
                 }
                 else{
                     ewayBillDetails= ewayBillDetailsDao.findByToGstinAndTimestampBetween(toGstin, 
                     fromTimestamp, toTimestamp);
+                    Gstin=toGstin;
                 }
                 if(ewayBillDetails.isEmpty()){
                     ErrorResponse error=new ErrorResponse();
-                    error.setErrorMessege("E-way Bill details not found in specified time range for Gstin "+fromGstin);
+                    error.setErrorMessege("E-way Bill details not found in specified time range for Gstin "+Gstin);
                     return error;
                 }
                 else{
