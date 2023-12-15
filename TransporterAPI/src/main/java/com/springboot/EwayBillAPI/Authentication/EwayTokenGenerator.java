@@ -14,6 +14,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 @Configuration
 public class EwayTokenGenerator {
@@ -30,6 +33,7 @@ public class EwayTokenGenerator {
 
     public void generateToken(String username, String password, String gstin) throws URISyntaxException, IOException{
         
+        try{
         URL weburl=new URL(ewayBillAuthenticationUrl);
         String authString="Bearer "+accessToken;
         HttpURLConnection webConnection = (HttpURLConnection) weburl.openConnection();
@@ -60,6 +64,9 @@ public class EwayTokenGenerator {
             this.authToken=respJson.getJSONObject("Data").getString("AuthToken");
             this.sek=respJson.getJSONObject("Data").getString("Sek");
         }
+    }catch(Exception e){
+        log.info(e.toString());
+    }
     }
 
     public String getAuthToken(){

@@ -18,8 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import com.springboot.EwayBillAPI.Authentication.EwayTokenGenerator;
-import com.springboot.EwayBillAPI.Dao.EwayBillUserDao;
 import com.springboot.EwayBillAPI.Dao.EwayBillDetailsDao;
 import com.springboot.EwayBillAPI.Dao.EwayBillItemListDao;
 import com.springboot.EwayBillAPI.Dao.EwayBillVehicleListDao;
