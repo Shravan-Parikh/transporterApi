@@ -37,8 +37,12 @@ public class SavingDataScheduledTask {
         if(data.size()>0){
             for(EwayBillUsers credentialData: data){
                 // First generating the authToken and sek then using it to get details by date
+                try{
                 ewayTokenGenerator.generateToken(credentialData.getUsername(), credentialData.getPassword(), credentialData.getGstin());
                 savingData.savingEwayBillData(credentialData,ewayTokenGenerator.getAuthToken(), ewayTokenGenerator.getSek());
+                }catch(Exception e){
+                    continue;
+                }
             }
         }
     }
