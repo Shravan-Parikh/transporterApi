@@ -33,11 +33,6 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class SavingData {
     
-    @Autowired
-    public EwayTokenGenerator ewayTokenGenerator;
-
-    @Autowired
-    public EwayBillUserDao credentialsDao;
 
     @Autowired
     public EwayBillDetailsDao ewayBillDetailsDao;
@@ -58,12 +53,10 @@ public class SavingData {
     String getEwayBillDetailsByEwbNoUrl;
 
     @Async
-    public void savingEwayBillData(EwayBillUsers credentialsData) throws URISyntaxException, IOException{
+    public void savingEwayBillData(EwayBillUsers credentialsData, String authtoken, String sek) throws URISyntaxException, IOException{
         
         try{
 
-        // First generating the authToken and sek then using it to get details by date
-        ewayTokenGenerator.generateToken(credentialsData.getUsername(), credentialsData.getPassword(), credentialsData.getGstin());
         URL weburl=new URL(getEwayBillDetailsByDateByRecieverUrl+LocalDate.now(ZoneId.of("Asia/Kolkata")).minusDays(1).toString());
         String authString="Bearer "+accessToken;
         HttpURLConnection webConnection = (HttpURLConnection) weburl.openConnection();
@@ -72,8 +65,8 @@ public class SavingData {
         webConnection.setRequestProperty("Content-Type", "application/json");
         webConnection.setRequestProperty("Authorization", authString);
         webConnection.setRequestProperty("gstin", credentialsData.getGstin());
-        webConnection.setRequestProperty("authtoken", ewayTokenGenerator.getAuthToken());
-        webConnection.setRequestProperty("sek", ewayTokenGenerator.getSek());
+        webConnection.setRequestProperty("authtoken", authtoken);
+        webConnection.setRequestProperty("sek", sek);
         webConnection.setDoOutput(true);
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(webConnection.getInputStream(), StandardCharsets.UTF_8))) {
@@ -102,8 +95,8 @@ public class SavingData {
                     webConnection.setRequestProperty("Content-Type", "application/json");
                     webConnection.setRequestProperty("Authorization", authString);
                     webConnection.setRequestProperty("gstin", credentialsData.getGstin());
-                    webConnection.setRequestProperty("authtoken", ewayTokenGenerator.getAuthToken());
-                    webConnection.setRequestProperty("sek", ewayTokenGenerator.getSek());
+                    webConnection.setRequestProperty("authtoken", authtoken);
+                    webConnection.setRequestProperty("sek", sek);
                     webConnection.setDoOutput(true);
 
                     try (BufferedReader br2 = new BufferedReader(
