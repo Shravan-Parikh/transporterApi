@@ -18,8 +18,6 @@ import com.springboot.EwayBillAPI.Response.ErrorResponse;
 import com.springboot.EwayBillAPI.Response.EwayBillResponse;
 import com.springboot.EwayBillAPI.Response.ItemListResponse;
 import com.springboot.EwayBillAPI.Response.VehicleListResponse;
-import com.springboot.ShipperAPI.Dao.ShipperDao;
-import com.springboot.ShipperAPI.Entity.Shipper;
 
 @Service
 public class EwayBillServiceImpl implements EwayBillService{
@@ -35,9 +33,6 @@ public class EwayBillServiceImpl implements EwayBillService{
 
     @Autowired
     EwayBillVehicleListDao ewayBillVehicleListDao;
-
-    @Autowired
-    ShipperDao shipperDao;
 
     @Override
     public Object SaveCredentials(EwayBillUsers entity) {
