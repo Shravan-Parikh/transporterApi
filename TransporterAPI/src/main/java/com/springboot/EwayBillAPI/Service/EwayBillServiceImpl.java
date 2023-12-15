@@ -42,17 +42,8 @@ public class EwayBillServiceImpl implements EwayBillService{
     @Override
     public Object SaveCredentials(EwayBillUsers entity) {
 
-        // Verifying if the shipperID is valid provided by the user
-        Optional<Shipper> shipper=shipperDao.findById(entity.getShipperId());
-        if(shipper.isPresent()){
-            credentialsDao.save(entity);
-            return entity;
-        }
-        else{
-            ErrorResponse error=new ErrorResponse();
-            error.setErrorMessege("ShipperID does not exist");
-            return error;
-        }
+        credentialsDao.save(entity);
+        return entity;
     }
 
     @Override
