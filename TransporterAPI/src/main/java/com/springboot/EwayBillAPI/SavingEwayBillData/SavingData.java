@@ -60,6 +60,8 @@ public class SavingData {
     @Async
     public void savingEwayBillData(EwayBillUsers credentialsData) throws URISyntaxException, IOException{
         
+        try{
+
         // First generating the authToken and sek then using it to get details by date
         ewayTokenGenerator.generateToken(credentialsData.getUsername(), credentialsData.getPassword(), credentialsData.getGstin());
         URL weburl=new URL(getEwayBillDetailsByDateByRecieverUrl+LocalDate.now(ZoneId.of("Asia/Kolkata")).minusDays(1).toString());
@@ -287,6 +289,9 @@ public class SavingData {
                     }    
                 }            
             }
-        }  
+        } 
+        }catch(Exception e){
+            log.info(e.toString());
+        } 
     }
 }
