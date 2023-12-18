@@ -26,4 +26,7 @@ public class EwayBillUsers {
     private String password;
     @NotBlank(message = "gstin number Can not be blank")
     private String gstin;
+    @NotBlank(message = "role Can not be blank")
+    private String role;
+    private long stateCode;
 }
