@@ -44,7 +44,7 @@ public class EwayBillServiceImpl implements EwayBillService{
 
     @Override
     public Object getEwayBill(Long ewbNo, String fromGstin, 
-    String toGstin,String fromDate,String toDate){
+    String toGstin, String transporterGstin, String fromDate,String toDate){
 
         if(ewbNo!=null){
            Optional<EwayBillEntity> ewayBillDetails = ewayBillDetailsDao.findById(ewbNo);
@@ -57,7 +57,7 @@ public class EwayBillServiceImpl implements EwayBillService{
             return createResponse(ewayBillDetails.get());
            }
         }
-        else if(fromGstin!=null || toGstin!=null){
+        else if(fromGstin!=null || toGstin!=null || transporterGstin!=null){
             if(fromDate!=null && toDate!=null){
                 // Converting String to Timestamp and covering the whole range staring from
                 // 12 am for the start date to 11:59 pm for the end date
@@ -70,10 +70,15 @@ public class EwayBillServiceImpl implements EwayBillService{
                     fromTimestamp, toTimestamp);
                     Gstin=fromGstin;
                 }
-                else{
+                else if(toGstin!=null){
                     ewayBillDetails= ewayBillDetailsDao.findByToGstinAndTimestampBetween(toGstin, 
                     fromTimestamp, toTimestamp);
                     Gstin=toGstin;
+                }
+                else if(transporterGstin!=null){
+                    ewayBillDetails= ewayBillDetailsDao.findByTransporterIdAndTimestampBetween(transporterGstin, 
+                    fromTimestamp, toTimestamp);
+                    Gstin=transporterGstin;
                 }
                 if(ewayBillDetails.isEmpty()){
                     ErrorResponse error=new ErrorResponse();
