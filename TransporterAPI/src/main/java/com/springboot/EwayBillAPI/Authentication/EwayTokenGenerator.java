@@ -21,9 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 @Configuration
 public class EwayTokenGenerator {
 
-    private String authToken;
-
-    private String sek;
 
     @Value("${EwayBillAccessToken}")
     String accessToken;
@@ -31,9 +28,12 @@ public class EwayTokenGenerator {
     @Value("${EwayBillAuthenticationUrl}")
     String ewayBillAuthenticationUrl;
 
-    public void generateToken(String username, String password, String gstin) throws URISyntaxException, IOException{
+    public String generateToken(String username, String password, String gstin) throws URISyntaxException, IOException{
         
         try{
+            
+        String authToken="";
+        String sek="";
         URL weburl=new URL(ewayBillAuthenticationUrl);
         String authString="Bearer "+accessToken;
         HttpURLConnection webConnection = (HttpURLConnection) weburl.openConnection();
@@ -61,19 +61,13 @@ public class EwayTokenGenerator {
                 resp.append(respLine.trim());
             }    
             JSONObject respJson = new JSONObject(resp.toString());  
-            this.authToken=respJson.getJSONObject("Data").getString("AuthToken");
-            this.sek=respJson.getJSONObject("Data").getString("Sek");
+            authToken=respJson.getJSONObject("Data").getString("AuthToken");
+            sek=respJson.getJSONObject("Data").getString("Sek");
         }
+        return authToken+" "+sek;
     }catch(Exception e){
         log.info(e.toString());
+        return null;
     }
-    }
-
-    public String getAuthToken(){
-        return authToken;
-    }
-
-    public String getSek(){
-        return sek;
     }
 }

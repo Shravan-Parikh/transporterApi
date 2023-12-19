@@ -37,6 +37,7 @@ public class EwayBillServiceImpl implements EwayBillService{
     @Override
     public Object SaveCredentials(EwayBillUsers entity) {
 
+        entity.setRole(entity.getRole().toUpperCase());
         credentialsDao.save(entity);
         return entity;
     }
