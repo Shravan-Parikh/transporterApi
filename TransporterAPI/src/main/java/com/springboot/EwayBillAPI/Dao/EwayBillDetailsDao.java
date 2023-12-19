@@ -15,4 +15,5 @@ public interface EwayBillDetailsDao extends JpaRepository<EwayBillEntity, Long> 
 
     List<EwayBillEntity> findByToGstinAndTimestampBetween(String fromGstin, Timestamp fromTimestamp, Timestamp toTimestamp);
     
+    List<EwayBillEntity> findByTransporterIdAndTimestampBetween(String transporterId, Timestamp fromTimestamp, Timestamp toTimestamp);
 }
