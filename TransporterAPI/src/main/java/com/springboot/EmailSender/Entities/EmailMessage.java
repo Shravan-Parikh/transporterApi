@@ -1,11 +1,7 @@
 package com.springboot.EmailSender.Entities;
 
 import java.sql.Timestamp;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -25,15 +21,16 @@ public class EmailMessage {
 	 @NotBlank(message = "Email Cannot Be Empty")
 	    private String receiverMailId;
 	 @NotBlank(message = "Sender Name Cannot Be Empty")
-	    private String senderName;
+	    private String companyName;
 	 private String companyId;     // optional
+	@Enumerated(EnumType.STRING)
 	 private roles role;		   // optional
 
 	 @CreationTimestamp
 	    public Timestamp timestamp;
 
 	 public enum roles{            //optional
-		 ADMIN, EDTIOR, VIEWER
+		 ADMIN, EDITOR, VIEWER
 	 }
 	 public enum emailSentStatus {
 			SENT, NOT_SENT
