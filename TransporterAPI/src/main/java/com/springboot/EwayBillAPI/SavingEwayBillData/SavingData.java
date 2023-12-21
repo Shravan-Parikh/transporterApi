@@ -8,10 +8,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +15,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import com.springboot.EwayBillAPI.Authentication.EwayTokenGenerator;
-import com.springboot.EwayBillAPI.Dao.EwayBillUserDao;
 import com.springboot.EwayBillAPI.Dao.EwayBillDetailsDao;
 import com.springboot.EwayBillAPI.Dao.EwayBillItemListDao;
 import com.springboot.EwayBillAPI.Dao.EwayBillVehicleListDao;
@@ -33,11 +28,6 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class SavingData {
     
-    @Autowired
-    public EwayTokenGenerator ewayTokenGenerator;
-
-    @Autowired
-    public EwayBillUserDao credentialsDao;
 
     @Autowired
     public EwayBillDetailsDao ewayBillDetailsDao;
@@ -48,31 +38,71 @@ public class SavingData {
     @Autowired
     public EwayBillVehicleListDao vehicleListDao;
 
+    @Autowired
+    public EwayTokenGenerator ewayTokenGenerator;
+
     @Value("${EwayBillAccessToken}")
     String accessToken;
 
-    @Value("${GetEwayBillDetailsByDateUrl}")
-    String getEwayBillDetailsByDateUrl;
+    @Value("${GetEwayBillDetailsByDateByRecieverUrl}")
+    String getEwayBillDetailsByDateByRecieverUrl;
+
+    @Value("${GetEwayBillDetailsByDateByTransporterUrl}")
+    String getEwayBillDetailsByDateByTransporterUrl;
 
     @Value("${GetEwayBillDetailsByEwbNo}")
     String getEwayBillDetailsByEwbNoUrl;
 
     @Async
-    public void savingEwayBillData(EwayBillUsers credentialsData) throws URISyntaxException, IOException{
+    public void savingEwayBillData(EwayBillUsers userData, String date, Timestamp timestamp) throws URISyntaxException, IOException{
         
-        // First generating the authToken and sek then using it to get details by date
-        ewayTokenGenerator.generateToken(credentialsData.getUsername(), credentialsData.getPassword(), credentialsData.getGstin());
-        URL weburl=new URL(getEwayBillDetailsByDateUrl+LocalDate.now(ZoneId.of("Asia/Kolkata")).toString());
+        try{
+
+        URL weburl=null;
+        HttpURLConnection webConnection=null;
+        String authtoken=null;
+        String sek=null;
         String authString="Bearer "+accessToken;
-        HttpURLConnection webConnection = (HttpURLConnection) weburl.openConnection();
-        webConnection.setRequestMethod("GET");
-        webConnection.setRequestProperty("Accept", "application/json");
-        webConnection.setRequestProperty("Content-Type", "application/json");
-        webConnection.setRequestProperty("Authorization", authString);
-        webConnection.setRequestProperty("gstin", credentialsData.getGstin());
-        webConnection.setRequestProperty("authtoken", ewayTokenGenerator.getAuthToken());
-        webConnection.setRequestProperty("sek", ewayTokenGenerator.getSek());
-        webConnection.setDoOutput(true);
+
+
+        if(userData.getRole().equals("RECIEVER")){
+            String credential=ewayTokenGenerator.generateToken(userData.getUsername(), userData.getPassword(), userData.getGstin());
+            if(credential!=null){
+                authtoken=credential.substring(0, credential.indexOf(' '));
+                sek=credential.substring(credential.indexOf(' ')+1);
+                weburl=new URL(getEwayBillDetailsByDateByRecieverUrl+date);
+                webConnection = (HttpURLConnection) weburl.openConnection();
+                webConnection.setRequestMethod("GET");
+                webConnection.setRequestProperty("Accept", "application/json");
+                webConnection.setRequestProperty("Content-Type", "application/json");
+                webConnection.setRequestProperty("Authorization", authString);
+                webConnection.setRequestProperty("gstin", userData.getGstin());
+                webConnection.setRequestProperty("authtoken", authtoken);
+                webConnection.setRequestProperty("sek", sek);
+                webConnection.setDoOutput(true);
+            }
+        }
+        else if(userData.getRole().equals("TRANSPORTER")){
+            String credential=ewayTokenGenerator.generateToken(userData.getUsername(), userData.getPassword(), userData.getGstin());
+            if(credential!=null){
+                authtoken=credential.substring(0, credential.indexOf(' '));
+                sek=credential.substring(credential.indexOf(' ')+1);
+                weburl=new URL(getEwayBillDetailsByDateByTransporterUrl
+                                                                    +"?date="
+                                                                    +date
+                                                                    +"&stateCode="
+                                                                    +Long.toString(userData.getStateCode()));
+                webConnection = (HttpURLConnection) weburl.openConnection();
+                webConnection.setRequestMethod("GET");
+                webConnection.setRequestProperty("Accept", "application/json");
+                webConnection.setRequestProperty("Content-Type", "application/json");
+                webConnection.setRequestProperty("Authorization", authString);
+                webConnection.setRequestProperty("gstin", userData.getGstin());
+                webConnection.setRequestProperty("authtoken", authtoken);
+                webConnection.setRequestProperty("sek", sek);
+                webConnection.setDoOutput(true);
+            }
+        }
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(webConnection.getInputStream(), StandardCharsets.UTF_8))) {
             StringBuilder resp = new StringBuilder();
@@ -99,9 +129,9 @@ public class SavingData {
                     webConnection.setRequestProperty("Accept", "application/json");
                     webConnection.setRequestProperty("Content-Type", "application/json");
                     webConnection.setRequestProperty("Authorization", authString);
-                    webConnection.setRequestProperty("gstin", credentialsData.getGstin());
-                    webConnection.setRequestProperty("authtoken", ewayTokenGenerator.getAuthToken());
-                    webConnection.setRequestProperty("sek", ewayTokenGenerator.getSek());
+                    webConnection.setRequestProperty("gstin", userData.getGstin());
+                    webConnection.setRequestProperty("authtoken", authtoken);
+                    webConnection.setRequestProperty("sek", sek);
                     webConnection.setDoOutput(true);
 
                     try (BufferedReader br2 = new BufferedReader(
@@ -201,7 +231,7 @@ public class SavingData {
                         ewayBillData.setTransactionType(transactionType);
                         ewayBillData.setOtherValue(otherValue);
                         ewayBillData.setCessNonAdvolValue(cessNonAdvolValue);
-                        ewayBillData.setTimestamp(Timestamp.valueOf(LocalDateTime.now(ZoneId.of("Asia/Kolkata"))));
+                        ewayBillData.setTimestamp(timestamp);
 
                         ewayBillDetailsDao.save(ewayBillData);
 
@@ -287,6 +317,9 @@ public class SavingData {
                     }    
                 }            
             }
-        }  
+        } 
+        }catch(Exception e){
+            log.info(e.toString());
+        } 
     }
 }

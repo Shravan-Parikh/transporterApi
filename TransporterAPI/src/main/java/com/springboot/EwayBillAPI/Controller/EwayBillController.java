@@ -31,10 +31,11 @@ public class EwayBillController {
         @RequestParam(required = false) Long ewbNo,
         @RequestParam(required = false) String fromGstin,
         @RequestParam(required = false) String toGstin,
+        @RequestParam(required = false) String transporterGstin,
         @RequestParam(required = false) String fromDate,
         @RequestParam(required = false) String toDate
     ){
         return new ResponseEntity<Object>(service.getEwayBill(ewbNo, fromGstin, 
-        toGstin, fromDate, toDate), HttpStatus.OK);
+        toGstin, transporterGstin, fromDate, toDate), HttpStatus.OK);
     }
 }

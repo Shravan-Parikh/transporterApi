@@ -18,8 +18,6 @@ import com.springboot.EwayBillAPI.Response.ErrorResponse;
 import com.springboot.EwayBillAPI.Response.EwayBillResponse;
 import com.springboot.EwayBillAPI.Response.ItemListResponse;
 import com.springboot.EwayBillAPI.Response.VehicleListResponse;
-import com.springboot.ShipperAPI.Dao.ShipperDao;
-import com.springboot.ShipperAPI.Entity.Shipper;
 
 @Service
 public class EwayBillServiceImpl implements EwayBillService{
@@ -36,28 +34,17 @@ public class EwayBillServiceImpl implements EwayBillService{
     @Autowired
     EwayBillVehicleListDao ewayBillVehicleListDao;
 
-    @Autowired
-    ShipperDao shipperDao;
-
     @Override
     public Object SaveCredentials(EwayBillUsers entity) {
 
-        // Verifying if the shipperID is valid provided by the user
-        Optional<Shipper> shipper=shipperDao.findById(entity.getShipperId());
-        if(shipper.isPresent()){
-            credentialsDao.save(entity);
-            return entity;
-        }
-        else{
-            ErrorResponse error=new ErrorResponse();
-            error.setErrorMessege("ShipperID does not exist");
-            return error;
-        }
+        entity.setRole(entity.getRole().toUpperCase());
+        credentialsDao.save(entity);
+        return entity;
     }
 
     @Override
     public Object getEwayBill(Long ewbNo, String fromGstin, 
-    String toGstin,String fromDate,String toDate){
+    String toGstin, String transporterGstin, String fromDate,String toDate){
 
         if(ewbNo!=null){
            Optional<EwayBillEntity> ewayBillDetails = ewayBillDetailsDao.findById(ewbNo);
@@ -70,24 +57,32 @@ public class EwayBillServiceImpl implements EwayBillService{
             return createResponse(ewayBillDetails.get());
            }
         }
-        else if(fromGstin!=null || toGstin!=null){
+        else if(fromGstin!=null || toGstin!=null || transporterGstin!=null){
             if(fromDate!=null && toDate!=null){
                 // Converting String to Timestamp and covering the whole range staring from
                 // 12 am for the start date to 11:59 pm for the end date
                 Timestamp fromTimestamp=Timestamp.valueOf(fromDate.trim() + " 00:00:00");
                 Timestamp toTimestamp=Timestamp.valueOf(toDate.trim() + " 23:59:59");
                 List<EwayBillEntity>  ewayBillDetails=new ArrayList<EwayBillEntity>();
+                String Gstin="";
                 if(fromGstin!=null){
                     ewayBillDetails= ewayBillDetailsDao.findByFromGstinAndTimestampBetween(fromGstin, 
                     fromTimestamp, toTimestamp);
+                    Gstin=fromGstin;
                 }
-                else{
+                else if(toGstin!=null){
                     ewayBillDetails= ewayBillDetailsDao.findByToGstinAndTimestampBetween(toGstin, 
                     fromTimestamp, toTimestamp);
+                    Gstin=toGstin;
+                }
+                else if(transporterGstin!=null){
+                    ewayBillDetails= ewayBillDetailsDao.findByTransporterIdAndTimestampBetween(transporterGstin, 
+                    fromTimestamp, toTimestamp);
+                    Gstin=transporterGstin;
                 }
                 if(ewayBillDetails.isEmpty()){
                     ErrorResponse error=new ErrorResponse();
-                    error.setErrorMessege("E-way Bill details not found in specified time range for Gstin "+fromGstin);
+                    error.setErrorMessege("E-way Bill details not found in specified time range for Gstin "+Gstin);
                     return error;
                 }
                 else{
