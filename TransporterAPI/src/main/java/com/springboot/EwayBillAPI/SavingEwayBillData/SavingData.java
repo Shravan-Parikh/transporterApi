@@ -65,7 +65,7 @@ public class SavingData {
         String authString="Bearer "+accessToken;
 
 
-        if(userData.getRole().equals("RECIEVER")){
+        if(userData.getRole().equals("RECEIVER")){
             String credential=ewayTokenGenerator.generateToken(userData.getUsername(), userData.getPassword(), userData.getGstin());
             if(credential!=null){
                 authtoken=credential.substring(0, credential.indexOf(' '));
@@ -122,6 +122,20 @@ public class SavingData {
                 JSONObject detailsByDateObject=detailsByDateArray.getJSONObject(i);
                 // Now we are fetching every eway bill number and getting the details with it then saving it to our Database
                 Long ewbNo=detailsByDateObject.getLong("ewbNo");
+                getDataByEwbNo(ewbNo, userData, authtoken, sek, timestamp);
+            }
+        }
+        }catch(Exception e){
+            log.info(e.toString());
+        }
+    }
+
+    public void getDataByEwbNo(Long ewbNo, EwayBillUsers userData, String authtoken, String sek, Timestamp timestamp){
+
+        URL weburl=null;
+        HttpURLConnection webConnection=null;
+        String authString="Bearer "+accessToken;
+            try{
                 if(ewayBillDetailsDao.findById(ewbNo).isEmpty()){
                     weburl=new URL(getEwayBillDetailsByEwbNoUrl+Long.toString(ewbNo));
                     webConnection = (HttpURLConnection) weburl.openConnection();
@@ -316,10 +330,8 @@ public class SavingData {
                         }
                     }    
                 }            
-            }
-        } 
-        }catch(Exception e){
-            log.info(e.toString());
-        } 
+            }catch(Exception e){
+                log.info(e.toString());
+            } 
     }
 }
