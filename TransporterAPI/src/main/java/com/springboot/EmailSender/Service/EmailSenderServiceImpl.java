@@ -32,20 +32,17 @@ public class EmailSenderServiceImpl implements EmailSenderService {
 	@Override
     public emailSentStatus sendEmail(EmailMessage emailMessage) {
 		String receiverMailId = emailMessage.getReceiverMailId();
-		String senderName = emailMessage.getSenderName();
+		String companyName = emailMessage.getCompanyName();
 		String companyId = emailMessage.getCompanyId();
-
-		if (emailMessage.getRole() == null){
-			emailMessage.setRole(EmailMessage.roles.VIEWER);
-		}
+		EmailMessage.roles role = emailMessage.getRole();
 
 	    try {
 	    	 SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
 	         simpleMailMessage.setFrom(senderEmail);
 	         simpleMailMessage.setTo(receiverMailId); // requested from the user
-	         String Subject = senderName + " has invited you to log in to 'Liveasy'";
+	         String Subject = companyName + " has invited you to log in to 'Liveasy'";
 	         simpleMailMessage.setSubject(Subject);
-	         String body = "Welcome to Liveasy, kindly login through the following url :- https://shipperwebapp.web.app/#/?companyId="+companyId+"&role="+ emailMessage.getRole();
+	         String body = "Welcome to Liveasy, kindly login through the following url :- https://shipperwebapp.web.app/#/?companyId="+companyId+"&role="+ role;
 	         simpleMailMessage.setText(body);
 	      
 		     // mail sending function
