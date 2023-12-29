@@ -15,8 +15,7 @@ import lombok.Data;
 public class EmailMessage {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String inviteId;
 	 
 	 @NotBlank(message = "Email Cannot Be Empty")
 	    private String receiverMailId;
