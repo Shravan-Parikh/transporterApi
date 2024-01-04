@@ -4,16 +4,14 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import com.springboot.EwayBillAPI.Entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.springboot.EwayBillAPI.Dao.EwayBillDetailsDao;
 import com.springboot.EwayBillAPI.Dao.EwayBillItemListDao;
 import com.springboot.EwayBillAPI.Dao.EwayBillUserDao;
 import com.springboot.EwayBillAPI.Dao.EwayBillVehicleListDao;
-import com.springboot.EwayBillAPI.Entity.EwayBillEntity;
-import com.springboot.EwayBillAPI.Entity.EwayBillUsers;
-import com.springboot.EwayBillAPI.Entity.ItemListDetails;
-import com.springboot.EwayBillAPI.Entity.VehicleListDetails;
 import com.springboot.EwayBillAPI.Response.ErrorResponse;
 import com.springboot.EwayBillAPI.Response.EwayBillResponse;
 import com.springboot.EwayBillAPI.Response.ItemListResponse;
@@ -200,6 +198,34 @@ public class EwayBillServiceImpl implements EwayBillService{
         response.setVehicleListDetails(vehicleListDetailsResponse);
 
         return response;
+    }
+
+    @Override
+    public Object updateEwayBillUser(String userId, EwayBillUserRequest entity){
+        Optional<EwayBillUsers> optionalEntity = credentialsDao.findById(userId);
+        if (optionalEntity.isPresent()){
+            EwayBillUsers userDetails = optionalEntity.get();
+            if (entity.getUsername() != null){
+                userDetails.setUsername(entity.getUsername());
+            }
+            if (entity.getPassword() != null){
+                userDetails.setPassword(entity.getPassword());
+            }
+            if (entity.getGstin() != null){
+                userDetails.setGstin(entity.getGstin());
+            }
+            if (entity.getRole() != null){
+                userDetails.setRole(entity.getRole());
+            }
+            if (entity.getStateCode() != 0){
+                userDetails.setStateCode(entity.getStateCode());
+            }
+            credentialsDao.save(userDetails);
+            return userDetails;
+        }
+        else{
+            return "UserId not Found";
+        }
     }
 
 }
