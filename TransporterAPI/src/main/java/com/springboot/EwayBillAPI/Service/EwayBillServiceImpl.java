@@ -250,24 +250,24 @@ public class EwayBillServiceImpl implements EwayBillService{
     }
 
     @Override
-    public Object updateEwayBillUser(String userId, EwayBillUserRequest entity){
+    public Object updateEwayBillUser(String userId, EwayBillUserRequest requestEntity){
         Optional<EwayBillUsers> optionalEntity = userDao.findById(userId);
         if (optionalEntity.isPresent()){
             EwayBillUsers userDetails = optionalEntity.get();
-            if (entity.getUsername() != null){
-                userDetails.setUsername(entity.getUsername());
+            if (requestEntity.getUsername() != null){
+                userDetails.setUsername(requestEntity.getUsername());
             }
-            if (entity.getPassword() != null){
-                userDetails.setPassword(entity.getPassword());
+            if (requestEntity.getPassword() != null){
+                userDetails.setPassword(requestEntity.getPassword());
             }
-            if (entity.getGstin() != null){
-                userDetails.setGstin(entity.getGstin());
+            if (requestEntity.getGstin() != null){
+                userDetails.setGstin(requestEntity.getGstin());
             }
-            if (entity.getRole() != null){
-                userDetails.setRole(entity.getRole());
+            if (requestEntity.getRole() != null){
+                userDetails.setRole(requestEntity.getRole());
             }
-            if (entity.getStateCode() != 0){
-                userDetails.setStateCode(entity.getStateCode());
+            if (requestEntity.getStateCode() != 0){
+                userDetails.setStateCode(requestEntity.getStateCode());
             }
             userDao.save(userDetails);
             return userDetails;

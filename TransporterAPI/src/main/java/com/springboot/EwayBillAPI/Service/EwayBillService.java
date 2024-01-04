@@ -12,7 +12,7 @@ public interface EwayBillService {
     public Object getEwayBill(Long ewbNo,String userId, String fromGstin,
     String toGstin, String transporterGstin, String fromDate,String toDate);
 
-    public Object updateEwayBillUser(String userId, EwayBillUserRequest entity);
+    public Object updateEwayBillUser(String userId, EwayBillUserRequest requestEntity);
 
     public Object getUserDetails(String userId);
 }

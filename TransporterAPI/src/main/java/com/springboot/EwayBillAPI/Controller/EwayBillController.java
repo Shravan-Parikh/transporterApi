@@ -45,8 +45,8 @@ public class EwayBillController {
     }
 
     @PutMapping("/updateEwayBill")
-    public ResponseEntity<Object> updateEwayBillUser(@RequestParam String userId, @RequestBody EwayBillUserRequest entity){
-        Object object= service.updateEwayBillUser(userId, entity);
+    public ResponseEntity<Object> updateEwayBillUser(@RequestParam String userId, @RequestBody EwayBillUserRequest requestEntity){
+        Object object= service.updateEwayBillUser(userId, requestEntity);
         if (object.getClass() == "".getClass()){
             return new ResponseEntity<>(object, HttpStatus.NOT_FOUND);
         }
