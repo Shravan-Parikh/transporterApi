@@ -25,16 +25,22 @@ public class EwayBillController {
         return new ResponseEntity<>(service.SaveCredentials(entity), HttpStatus.OK);
     }
 
+    @GetMapping("/ewayBillUser/{userId}")
+    public ResponseEntity<Object> userDetails(@PathVariable String userId){
+        return new ResponseEntity<>(service.getUserDetails(userId), HttpStatus.OK);
+    }
+
     @GetMapping("/ewayBill")
     public ResponseEntity<Object> ewayBillDetails(
         @RequestParam(required = false) Long ewbNo,
+        @RequestParam(required = false) String userId,
         @RequestParam(required = false) String fromGstin,
         @RequestParam(required = false) String toGstin,
         @RequestParam(required = false) String transporterGstin,
         @RequestParam(required = false) String fromDate,
         @RequestParam(required = false) String toDate
     ){
-        return new ResponseEntity<Object>(service.getEwayBill(ewbNo, fromGstin, 
+        return new ResponseEntity<Object>(service.getEwayBill(ewbNo, userId, fromGstin,
         toGstin, transporterGstin, fromDate, toDate), HttpStatus.OK);
     }
 
