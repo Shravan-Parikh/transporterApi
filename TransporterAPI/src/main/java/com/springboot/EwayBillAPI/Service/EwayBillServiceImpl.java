@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.springboot.EwayBillAPI.Entity.*;
+import com.springboot.EwayBillAPI.Model.EwayBillUserRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.springboot.EwayBillAPI.Authentication.EwayTokenGenerator;
@@ -251,9 +252,11 @@ public class EwayBillServiceImpl implements EwayBillService{
 
     @Override
     public Object updateEwayBillUser(String userId, EwayBillUserRequest requestEntity){
+        // checking if userId exists or not
         Optional<EwayBillUsers> optionalEntity = userDao.findById(userId);
         if (optionalEntity.isPresent()){
             EwayBillUsers userDetails = optionalEntity.get();
+            // if exists will check for the given details and change the corresponding ones
             if (requestEntity.getUsername() != null){
                 userDetails.setUsername(requestEntity.getUsername());
             }

@@ -4,8 +4,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import javax.validation.Valid;
 
-import com.springboot.EwayBillAPI.Entity.EwayBillEntity;
-import com.springboot.EwayBillAPI.Entity.EwayBillUserRequest;
+import com.springboot.EwayBillAPI.Model.EwayBillUserRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,10 +43,10 @@ public class EwayBillController {
         toGstin, transporterGstin, fromDate, toDate), HttpStatus.OK);
     }
 
-    @PutMapping("/updateEwayBill")
+    @PutMapping("/updateEwayBill") // For updating ewayBillUser
     public ResponseEntity<Object> updateEwayBillUser(@RequestParam String userId, @RequestBody EwayBillUserRequest requestEntity){
         Object object= service.updateEwayBillUser(userId, requestEntity);
-        if (object.getClass() == "".getClass()){
+        if (object.getClass() == "".getClass()){ // Checking if returned object is string or not to give proper response
             return new ResponseEntity<>(object, HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(object, HttpStatus.OK);

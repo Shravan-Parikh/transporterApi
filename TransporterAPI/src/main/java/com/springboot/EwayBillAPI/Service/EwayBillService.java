@@ -1,8 +1,7 @@
 package com.springboot.EwayBillAPI.Service;
 
 
-import com.springboot.EwayBillAPI.Entity.EwayBillEntity;
-import com.springboot.EwayBillAPI.Entity.EwayBillUserRequest;
+import com.springboot.EwayBillAPI.Model.EwayBillUserRequest;
 import com.springboot.EwayBillAPI.Entity.EwayBillUsers;
 
 public interface EwayBillService {

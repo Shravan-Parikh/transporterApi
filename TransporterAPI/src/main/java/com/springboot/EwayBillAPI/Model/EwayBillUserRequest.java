@@ -1,4 +1,4 @@
-package com.springboot.EwayBillAPI.Entity;
+package com.springboot.EwayBillAPI.Model;
 
 import lombok.Data;
 
