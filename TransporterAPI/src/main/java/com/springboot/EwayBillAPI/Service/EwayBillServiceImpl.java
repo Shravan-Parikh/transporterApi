@@ -5,6 +5,9 @@ import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import com.springboot.EwayBillAPI.Entity.*;
+import com.springboot.EwayBillAPI.Model.EwayBillUserRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.springboot.EwayBillAPI.Authentication.EwayTokenGenerator;
@@ -12,10 +15,6 @@ import com.springboot.EwayBillAPI.Dao.EwayBillDetailsDao;
 import com.springboot.EwayBillAPI.Dao.EwayBillItemListDao;
 import com.springboot.EwayBillAPI.Dao.EwayBillUserDao;
 import com.springboot.EwayBillAPI.Dao.EwayBillVehicleListDao;
-import com.springboot.EwayBillAPI.Entity.EwayBillEntity;
-import com.springboot.EwayBillAPI.Entity.EwayBillUsers;
-import com.springboot.EwayBillAPI.Entity.ItemListDetails;
-import com.springboot.EwayBillAPI.Entity.VehicleListDetails;
 import com.springboot.EwayBillAPI.Response.ErrorResponse;
 import com.springboot.EwayBillAPI.Response.EwayBillResponse;
 import com.springboot.EwayBillAPI.Response.ItemListResponse;
@@ -249,6 +248,36 @@ public class EwayBillServiceImpl implements EwayBillService{
         response.setVehicleListDetails(vehicleListDetailsResponse);
 
         return response;
+    }
+
+    @Override
+    public Object updateEwayBillUser(String userId, EwayBillUserRequest requestEntity){
+        // checking if userId exists or not
+        Optional<EwayBillUsers> optionalEntity = userDao.findById(userId);
+        if (optionalEntity.isPresent()){
+            EwayBillUsers userDetails = optionalEntity.get();
+            // if exists will check for the given details and change the corresponding ones
+            if (requestEntity.getUsername() != null){
+                userDetails.setUsername(requestEntity.getUsername());
+            }
+            if (requestEntity.getPassword() != null){
+                userDetails.setPassword(requestEntity.getPassword());
+            }
+            if (requestEntity.getGstin() != null){
+                userDetails.setGstin(requestEntity.getGstin());
+            }
+            if (requestEntity.getRole() != null){
+                userDetails.setRole(requestEntity.getRole());
+            }
+            if (requestEntity.getStateCode() != 0){
+                userDetails.setStateCode(requestEntity.getStateCode());
+            }
+            userDao.save(userDetails);
+            return userDetails;
+        }
+        else{
+            return "UserId not Found";
+        }
     }
 
 }

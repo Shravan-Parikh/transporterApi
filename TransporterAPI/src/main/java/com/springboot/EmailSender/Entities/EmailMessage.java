@@ -23,12 +23,12 @@ public class EmailMessage {
 	    private String companyName;
 	 private String companyId;     // optional
 	@Enumerated(EnumType.STRING)
-	 private roles role;		   // optional
+	 private Roles roles;		   // optional
 
 	 @CreationTimestamp
 	    public Timestamp timestamp;
 
-	 public enum roles{            //optional
+	 public enum Roles {            //optional
 		 ADMIN, EDITOR, VIEWER
 	 }
 	 public enum emailSentStatus {

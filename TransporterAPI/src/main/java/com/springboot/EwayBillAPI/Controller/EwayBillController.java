@@ -3,15 +3,12 @@ package com.springboot.EwayBillAPI.Controller;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import javax.validation.Valid;
+
+import com.springboot.EwayBillAPI.Model.EwayBillUserRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.springboot.EwayBillAPI.Entity.EwayBillUsers;
 import com.springboot.EwayBillAPI.Service.EwayBillService;
 
@@ -42,7 +39,16 @@ public class EwayBillController {
         @RequestParam(required = false) String fromDate,
         @RequestParam(required = false) String toDate
     ){
-        return new ResponseEntity<Object>(service.getEwayBill(ewbNo, userId, fromGstin, 
+        return new ResponseEntity<Object>(service.getEwayBill(ewbNo, userId, fromGstin,
         toGstin, transporterGstin, fromDate, toDate), HttpStatus.OK);
+    }
+
+    @PutMapping("/updateEwayBill") // For updating ewayBillUser
+    public ResponseEntity<Object> updateEwayBillUser(@RequestParam String userId, @RequestBody EwayBillUserRequest requestEntity){
+        Object object= service.updateEwayBillUser(userId, requestEntity);
+        if (object.getClass() == "".getClass()){ // Checking if returned object is string or not to give proper response
+            return new ResponseEntity<>(object, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(object, HttpStatus.OK);
     }
 }
