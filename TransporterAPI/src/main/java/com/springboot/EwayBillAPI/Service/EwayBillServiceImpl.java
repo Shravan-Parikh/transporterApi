@@ -1,29 +1,31 @@
 package com.springboot.EwayBillAPI.Service;
 
 import java.sql.Timestamp;
+import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import com.springboot.EwayBillAPI.Entity.*;
+import com.springboot.EwayBillAPI.Model.EwayBillUserRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.springboot.EwayBillAPI.Authentication.EwayTokenGenerator;
 import com.springboot.EwayBillAPI.Dao.EwayBillDetailsDao;
 import com.springboot.EwayBillAPI.Dao.EwayBillItemListDao;
 import com.springboot.EwayBillAPI.Dao.EwayBillUserDao;
 import com.springboot.EwayBillAPI.Dao.EwayBillVehicleListDao;
-import com.springboot.EwayBillAPI.Entity.EwayBillEntity;
-import com.springboot.EwayBillAPI.Entity.EwayBillUsers;
-import com.springboot.EwayBillAPI.Entity.ItemListDetails;
-import com.springboot.EwayBillAPI.Entity.VehicleListDetails;
 import com.springboot.EwayBillAPI.Response.ErrorResponse;
 import com.springboot.EwayBillAPI.Response.EwayBillResponse;
 import com.springboot.EwayBillAPI.Response.ItemListResponse;
 import com.springboot.EwayBillAPI.Response.VehicleListResponse;
+import com.springboot.EwayBillAPI.SavingEwayBillData.SavingData;
 
 @Service
 public class EwayBillServiceImpl implements EwayBillService{
 
     @Autowired
-    EwayBillUserDao credentialsDao;
+    EwayBillUserDao userDao;
 
     @Autowired
     EwayBillDetailsDao ewayBillDetailsDao;
@@ -34,29 +36,76 @@ public class EwayBillServiceImpl implements EwayBillService{
     @Autowired
     EwayBillVehicleListDao ewayBillVehicleListDao;
 
+    @Autowired
+    EwayTokenGenerator ewayTokenGenerator;
+
+    @Autowired
+    SavingData saveingData;
+
     @Override
     public Object SaveCredentials(EwayBillUsers entity) {
 
-        credentialsDao.save(entity);
+        entity.setRole(entity.getRole().toUpperCase());
+        userDao.save(entity);
         return entity;
     }
 
     @Override
-    public Object getEwayBill(Long ewbNo, String fromGstin, 
-    String toGstin,String fromDate,String toDate){
+    public Object getUserDetails(String userId) {
+        Optional<EwayBillUsers> userData=userDao.findById(userId);
+        if(userData.isEmpty()){
+            ErrorResponse error=new ErrorResponse();
+            error.setErrorMessege("User not found");
+            return error;
+        }
+        return userData.get();
+    }
+
+    @Override
+    public Object getEwayBill(Long ewbNo, String userId, String fromGstin, 
+    String toGstin, String transporterGstin, String fromDate,String toDate){
 
         if(ewbNo!=null){
+           ErrorResponse error=new ErrorResponse();
+           Timestamp timestamp=null;
            Optional<EwayBillEntity> ewayBillDetails = ewayBillDetailsDao.findById(ewbNo);
            if(ewayBillDetails.isEmpty()){
-            ErrorResponse error=new ErrorResponse();
-            error.setErrorMessege("E-way Bill details not found for ewbNo. "+ewbNo);
-            return error;
+
+            if(userId!=null){
+                Optional<EwayBillUsers> userData=userDao.findById(userId);
+                if(userData.isEmpty()){
+                    error.setErrorMessege("User not found");
+                    return error;
+                }
+                else if(userData.get().getRole().equals("TRANSPORTER")){
+                     timestamp=Timestamp.valueOf(LocalDateTime.now(ZoneId.of("Asia/Kolkata")));
+                }
+                try {
+                    String credential=ewayTokenGenerator.generateToken(userData.get().getUsername(),
+                     userData.get().getPassword(), userData.get().getGstin());
+                    if(credential!=null){
+                        String authtoken=credential.substring(0, credential.indexOf(' '));
+                        String sek=credential.substring(credential.indexOf(' ')+1);
+                        saveingData.getDataByEwbNo(ewbNo, userData.get(), authtoken, sek, timestamp);
+                        ewayBillDetails = ewayBillDetailsDao.findById(ewbNo);
+                    }
+                    if(ewayBillDetails.isEmpty()){
+                        error.setErrorMessege("E-way Bill details not found for ewbNo. "+ewbNo);
+                        return error;
+                    }
+                } catch (Exception e) {
+                    error.setErrorMessege("E-way Bill details not found for ewbNo. "+ewbNo);
+                    return error;
+                }
+            }
+            else{
+                error.setErrorMessege("E-way Bill details not found for ewbNo. "+ewbNo+", Provide user Id");
+                return error;
+            }
            }
-           else{
             return createResponse(ewayBillDetails.get());
-           }
         }
-        else if(fromGstin!=null || toGstin!=null){
+        else if(fromGstin!=null || toGstin!=null || transporterGstin!=null){
             if(fromDate!=null && toDate!=null){
                 // Converting String to Timestamp and covering the whole range staring from
                 // 12 am for the start date to 11:59 pm for the end date
@@ -69,10 +118,15 @@ public class EwayBillServiceImpl implements EwayBillService{
                     fromTimestamp, toTimestamp);
                     Gstin=fromGstin;
                 }
-                else{
+                else if(toGstin!=null){
                     ewayBillDetails= ewayBillDetailsDao.findByToGstinAndTimestampBetween(toGstin, 
                     fromTimestamp, toTimestamp);
                     Gstin=toGstin;
+                }
+                else if(transporterGstin!=null){
+                    ewayBillDetails= ewayBillDetailsDao.findByTransporterIdAndTimestampBetween(transporterGstin, 
+                    fromTimestamp, toTimestamp);
+                    Gstin=transporterGstin;
                 }
                 if(ewayBillDetails.isEmpty()){
                     ErrorResponse error=new ErrorResponse();
@@ -194,6 +248,36 @@ public class EwayBillServiceImpl implements EwayBillService{
         response.setVehicleListDetails(vehicleListDetailsResponse);
 
         return response;
+    }
+
+    @Override
+    public Object updateEwayBillUser(String userId, EwayBillUserRequest requestEntity){
+        // checking if userId exists or not
+        Optional<EwayBillUsers> optionalEntity = userDao.findById(userId);
+        if (optionalEntity.isPresent()){
+            EwayBillUsers userDetails = optionalEntity.get();
+            // if exists will check for the given details and change the corresponding ones
+            if (requestEntity.getUsername() != null){
+                userDetails.setUsername(requestEntity.getUsername());
+            }
+            if (requestEntity.getPassword() != null){
+                userDetails.setPassword(requestEntity.getPassword());
+            }
+            if (requestEntity.getGstin() != null){
+                userDetails.setGstin(requestEntity.getGstin());
+            }
+            if (requestEntity.getRole() != null){
+                userDetails.setRole(requestEntity.getRole());
+            }
+            if (requestEntity.getStateCode() != 0){
+                userDetails.setStateCode(requestEntity.getStateCode());
+            }
+            userDao.save(userDetails);
+            return userDetails;
+        }
+        else{
+            return "UserId not Found";
+        }
     }
 
 }

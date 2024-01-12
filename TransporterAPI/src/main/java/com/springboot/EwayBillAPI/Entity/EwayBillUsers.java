@@ -18,12 +18,15 @@ import lombok.Setter;
 @NoArgsConstructor
 public class EwayBillUsers {
     @Id
-    @NotBlank(message ="Shipper Id Can not be blank")
-    private String shipperId;
+    @NotBlank(message ="User Id Can not be blank")
+    private String userId;
     @NotBlank(message ="UserName Can not be blank")
     private String username;
     @NotBlank(message ="Password Can not be blank")
     private String password;
     @NotBlank(message = "gstin number Can not be blank")
     private String gstin;
+    @NotBlank(message = "role Can not be blank")
+    private String role;
+    private long stateCode;
 }

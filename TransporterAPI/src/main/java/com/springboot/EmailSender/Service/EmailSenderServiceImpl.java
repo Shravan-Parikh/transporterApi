@@ -11,6 +11,9 @@ import com.google.api.client.util.Value;
 import com.springboot.EmailSender.Dao.EmailSenderDao;
 import com.springboot.EmailSender.Entities.EmailMessage.emailSentStatus;
 
+import java.util.Optional;
+import java.util.UUID;
+
 @Service
 public class EmailSenderServiceImpl implements EmailSenderService {
 	
@@ -32,24 +35,23 @@ public class EmailSenderServiceImpl implements EmailSenderService {
 	@Override
     public emailSentStatus sendEmail(EmailMessage emailMessage) {
 		String receiverMailId = emailMessage.getReceiverMailId();
-		String senderName = emailMessage.getSenderName();
-		String companyId = emailMessage.getCompanyId();
+		String companyName = emailMessage.getCompanyName();
 
-		if (emailMessage.getRole() == null){
-			emailMessage.setRole(EmailMessage.roles.VIEWER);
-		}
+		String inviteId ="inviteId:"+ UUID.randomUUID().toString();
+		emailMessage.setInviteId(inviteId);
 
 	    try {
 	    	 SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
 	         simpleMailMessage.setFrom(senderEmail);
 	         simpleMailMessage.setTo(receiverMailId); // requested from the user
-	         String Subject = senderName + " has invited you to log in to 'Liveasy'";
+	         String Subject = companyName + " has invited you to log in to 'Liveasy'";
 	         simpleMailMessage.setSubject(Subject);
-	         String body = "Welcome to Liveasy, kindly login through the following url :- https://shipperwebapp.web.app/#/?companyId="+companyId+"&role="+ emailMessage.getRole();
+	         String body = "Welcome to Liveasy, kindly login through the following url :- https://shipperwebapp.web.app/#/"+inviteId;
 	         simpleMailMessage.setText(body);
 	      
 		     // mail sending function
 	         this.mailSender.send(simpleMailMessage);
+			 emailSenderDao.save(emailMessage);
 
 	         // status will be saved as SENT if the mail is sent successfully
 	        return emailSentStatus.SENT; 
@@ -59,5 +61,9 @@ public class EmailSenderServiceImpl implements EmailSenderService {
 	    }
 	}
 
-	
+	@Override
+	public EmailMessage getInviteDetails(String inviteId){
+		Optional<EmailMessage> emailMessage = emailSenderDao.findById(inviteId);
+		return emailMessage.orElse(null);
+	}
 }

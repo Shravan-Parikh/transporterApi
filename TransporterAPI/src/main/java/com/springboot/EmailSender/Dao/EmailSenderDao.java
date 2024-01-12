@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 import com.springboot.EmailSender.Entities.EmailMessage;
 
 @Repository
-public interface EmailSenderDao extends JpaRepository<EmailMessage, Long> {
+public interface EmailSenderDao extends JpaRepository<EmailMessage, String> {
 	
 }
