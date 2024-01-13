@@ -74,7 +74,7 @@ public class EmailSenderServiceImpl implements EmailSenderService {
 			return "Deleted Successfully";
 		}
 		catch(Exception e){
-			return "InviteId not Found!";
+			return "InviteId not Found!";  // if invite Id doesn't exist then Exception is thrown
 		}
 	}
 }
