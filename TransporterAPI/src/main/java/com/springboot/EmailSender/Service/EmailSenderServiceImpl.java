@@ -46,7 +46,7 @@ public class EmailSenderServiceImpl implements EmailSenderService {
 	         simpleMailMessage.setTo(receiverMailId); // requested from the user
 	         String Subject = companyName + " has invited you to log in to 'Liveasy'";
 	         simpleMailMessage.setSubject(Subject);
-	         String body = "Welcome to Liveasy, kindly login through the following url :- https://shipperwebapp.web.app/#/"+inviteId;
+	         String body = "Welcome to Liveasy, kindly login through the following url :- https://shipperwebapp.web.app/?inviteId="+inviteId;
 	         simpleMailMessage.setText(body);
 	      
 		     // mail sending function
@@ -65,5 +65,16 @@ public class EmailSenderServiceImpl implements EmailSenderService {
 	public EmailMessage getInviteDetails(String inviteId){
 		Optional<EmailMessage> emailMessage = emailSenderDao.findById(inviteId);
 		return emailMessage.orElse(null);
+	}
+
+	@Override
+	public String deleteInviteDetails(String inviteId){
+		try{
+			emailSenderDao.deleteById(inviteId);
+			return "Deleted Successfully";
+		}
+		catch(Exception e){
+			return "InviteId not Found!";
+		}
 	}
 }
