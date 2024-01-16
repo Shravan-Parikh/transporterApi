@@ -35,4 +35,10 @@ public class EmailController {
             return new ResponseEntity<>("InviteId does not Exists",HttpStatus.NOT_FOUND);
         }
     }
+
+    @DeleteMapping("/deleteInvite")
+    public ResponseEntity<String> deleteInviteDetails(@RequestParam String inviteId){
+        String response = emailSenderService.deleteInviteDetails(inviteId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 } 

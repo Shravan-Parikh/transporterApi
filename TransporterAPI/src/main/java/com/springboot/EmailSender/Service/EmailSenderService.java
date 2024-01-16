@@ -6,5 +6,6 @@ import com.springboot.EmailSender.Entities.EmailMessage.emailSentStatus;
 public interface EmailSenderService {
 	public emailSentStatus sendEmail(EmailMessage emailMessage);
 	public EmailMessage getInviteDetails(String inviteId);
+	public String deleteInviteDetails(String inviteId);
 	
 }
