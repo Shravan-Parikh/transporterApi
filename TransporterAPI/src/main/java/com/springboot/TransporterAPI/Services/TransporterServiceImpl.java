@@ -245,7 +245,7 @@ public class TransporterServiceImpl implements TransporterService {
 			transporter.setKyc(updateTransporter.getKyc());
 		}
 		
-		temp=updateTransporter.getEmailID();
+		temp=updateTransporter.getEmailId();
 		if (StringUtils.isNotBlank(temp)) {
 			transporter.setEmailId(temp.trim());
 		}
