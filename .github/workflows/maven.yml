@@ -30,4 +30,5 @@ jobs:
     - run: sudo docker container rm transporter-container || true
     - run: sudo docker image rm transporter || true
     - run: sudo docker build -t transporter .
-    - run: sudo docker run -d --env-file /home/ubuntu/envDev.properties -p 9090:9090 --name transporter-container transporter | echo "success" 
+    - run: sudo docker run -d --env-file /home/ubuntu/envDev.properties -p 9090:9090 --name transporter-container transporter | echo "success"
+    
