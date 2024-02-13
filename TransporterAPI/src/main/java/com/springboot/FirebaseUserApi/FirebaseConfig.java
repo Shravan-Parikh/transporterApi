@@ -23,9 +23,9 @@ public class FirebaseConfig {
 
         //authentication with firebase
         FirebaseOptions options = FirebaseOptions.builder()
-                    .setCredentials(GoogleCredentials.fromStream(refreshToken))
-                    .setDatabaseUrl("https://shipperwebapp-default-rtdb.asia-southeast1.firebasedatabase.app")
-                    .build();
+                .setCredentials(GoogleCredentials.fromStream(refreshToken))
+                .setDatabaseUrl("https://shipperwebapp-default-rtdb.asia-southeast1.firebasedatabase.app")
+                .build();
 
         //initializing the app
         FirebaseApp.initializeApp(options);
