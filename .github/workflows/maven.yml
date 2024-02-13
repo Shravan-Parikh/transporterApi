@@ -22,8 +22,7 @@ jobs:
       with:
         java-version: '11'
         distribution: 'adopt'
-        
-
+      
     - run: sudo docker container stop transporter-container || true
     - name: Build with Maven
       run: mvn -B package --file pom.xml
