@@ -49,7 +49,7 @@ public class DocServiceImpl implements DocService {
 	@Autowired
 	private AmazonS3 client;
 
-	private String bucketname = "liveasydocuments";
+	private String bucketname = "liveasydocsdev";
 
 	@Transactional(rollbackFor=Exception.class)
 	@Override
@@ -274,5 +274,4 @@ public class DocServiceImpl implements DocService {
 		entityDao.deleteById(entityId);
 
 	}
-
 }
